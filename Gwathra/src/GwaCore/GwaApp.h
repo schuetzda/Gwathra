@@ -2,7 +2,7 @@
 
 #include "GwaCore.h"
 namespace gwa {
-	class GWA_API GwaApp
+	class GwaApp
 	{
 	public:
 		GwaApp();

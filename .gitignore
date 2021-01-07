@@ -2,6 +2,10 @@
 .vs/
 bin-int/
 bin/
+!externals/bin/premake/
 
 # Files
 *.user
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
