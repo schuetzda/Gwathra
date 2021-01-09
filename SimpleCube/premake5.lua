@@ -25,7 +25,6 @@ project "SimpleCube"
 		
 	filter "system:windows"
 		systemversion "latest"
-		entrypoint "mainCRTStartup"
 	
 		defines 
 		{

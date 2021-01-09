@@ -15,6 +15,15 @@ project "Gwathra"
 	
 	includedirs
 	{
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.glad}"
+	}
+	
+	links
+	{
+		"GLFW",
+		"glad",
+		"opengl32.lib"
 	}
 	
 	filter "system:windows"

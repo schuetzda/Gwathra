@@ -1,8 +1,8 @@
 #pragma once
-#include "GwaApp.h"
+#include "Application.h"
 #ifdef GWA_PLATFORM_WINDOWS
 
-	extern gwa::GwaApp* gwa::createApplication();
+	extern gwa::Application* gwa::createApplication();
 
 	int main(int argc, char** argv) {
 		auto app = gwa::createApplication();
