@@ -15,12 +15,14 @@ project "SimpleCube"
 	
 	includedirs
 	{
-		"%{wks.location}/Gwathra/src"
+		"%{wks.location}/Gwathra/src",
+		"%{IncludeDir.glad}"
 	}
-		
+
 	links 
 	{
-		"Gwathra"
+		"Gwathra",
+		"glad"
 	}
 		
 	filter "system:windows"

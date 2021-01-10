@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "GwaMain.h"
+
 #include "Application.h"
 #include <iostream>
 
@@ -10,7 +10,8 @@ const unsigned int SCR_WIDTH = 1920;
 const unsigned int SCR_HEIGHT = 1080;
 
 namespace gwa {
-	
+	GLFWwindow* window;
+
 	void initGLFW() {
 		// glfw: initialize and configure
 		glfwInit();
@@ -30,19 +31,11 @@ namespace gwa {
 		glfwWindowHint(GLFW_DEPTH_BITS, 24);
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 	}
-
-	Application::Application() {
-
-	}
-
-	Application::~Application() {
-
-	}
-
-	void Application::run() {
+	
+	Application::Application(const std::string& name) {
 		initGLFW();
 		// glfw window creation
-		GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "SimpleCubeRenderer", NULL, NULL);
+		window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, name.c_str(), NULL, NULL);
 		if (window == NULL)
 		{
 			std::cout << "Failed to create GLFW windowa" << std::endl;
@@ -55,17 +48,38 @@ namespace gwa {
 		{
 			std::cout << "Failed to initialize GLAD" << std::endl;
 		}
+	}
 
-		main.init();
+	void Application::setMain(GwaMain* main) {
+		GwaMain::setInstance(main);
+	}
+
+	Application::~Application() {
+
+	}
+
+	void Application::run() {
+		GwaMain* main = GwaMain::getInstance();
+		main->init();
+
+		glfwSetWindowUserPointer(window, &main);
+
+		glfwSetFramebufferSizeCallback(window,
+			[](GLFWwindow* window, int width, int height) {
+
+				GwaMain* main = (GwaMain*)glfwGetWindowUserPointer(window);
+				main->windowSizeChanged(width, height);
+			}
+		);
 
 		while (!glfwWindowShouldClose(window))
 		{
-			main.render();
+			main->render();
 			glfwPollEvents();
 			// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 			glfwSwapBuffers(window);
 		}
-		main.deactivate();
+		main->deactivate();
 		glfwTerminate();
 	}
 }

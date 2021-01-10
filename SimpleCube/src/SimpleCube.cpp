@@ -1,15 +1,18 @@
 #include "Gwathra.h"
+#include "cubemain.h"
+#include "Core/entrypoint.h"
+namespace gwa {
+	class SimpleCube : public Application {
 
-class SimpleCube : public gwa::Application {
+	public:
+		SimpleCube() : Application("SimpleCube"){
+			setMain(new CubeMain());
+		}
+		~SimpleCube() {
 
-public:
-	SimpleCube() {
-		
+		}
+	};
+	Application* createApplication() {
+		return new SimpleCube();
 	}
-	~SimpleCube() {
-
-	}
-};
-gwa::Application* gwa::createApplication() {
-	return new SimpleCube();
 }

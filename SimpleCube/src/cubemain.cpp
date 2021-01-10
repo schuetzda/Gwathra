@@ -1,12 +1,24 @@
+#include <glad/glad.h>
+#include "cubemain.h"
+namespace gwa {
+	CubeMain::CubeMain() : GwaMain() {
+		
+	}
 
-void gwa::GwaMain::init()
-{
-}
+	void CubeMain::windowSizeChanged(int width, int height) {
+		int a = 0;
+	}
 
-void gwa::GwaMain::render()
-{
-}
+	void CubeMain::init() {
 
-void gwa::GwaMain::deactivate()
-{
+	}
+
+	void CubeMain::render() {
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	void CubeMain::deactivate() {
+
+	}
 }
