@@ -5,7 +5,8 @@
 
 static uint32_t SCR_WIDTH = 1920;
 static uint32_t SCR_HEIGHT = 1080;
-
+static GLFWwindow* window;
+//TODO: Window creation and Input events in seperate classes
 namespace gwa {
 	Application::Application(GwaMain *const main, const std::string& name): main(main), name(name) {
 		
@@ -17,8 +18,9 @@ namespace gwa {
 	}
 
 	void Application::run() {
+		
 		initGLFW();
-		GLFWwindow* window;
+		
 		window = glfwCreateWindow(SCR_WIDTH, 1080, "SimpleCubeRenderer", NULL, NULL);
 
 		if (window == NULL)
@@ -91,5 +93,23 @@ namespace gwa {
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+	}
+
+	
+	std::pair<double,double> Application::GetMousePosition() {
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+
+		return { (float)xpos, (float)ypos };
+	}
+
+	bool Application::IsKeyPressed(const int key){
+		auto state = glfwGetKey(window,key);
+		return state == GLFW_PRESS || state == GLFW_REPEAT;
+	}
+
+	bool Application::IsMouseButtonPressed(const int button){
+		auto state = glfwGetMouseButton(window,button);
+		return state == GLFW_PRESS;
 	}
 }

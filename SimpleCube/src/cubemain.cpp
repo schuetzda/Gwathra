@@ -104,11 +104,41 @@ namespace gwa {
 	}
 
 	void CubeMain::cursorPositionChanged(double x, double y) {
-
+		bool leftPressed = Application::IsMouseButtonPressed(0);
+		bool middlePressed = Application::IsMouseButtonPressed(2);
+		bool rightPressed = Application::IsMouseButtonPressed(1);
+		if (leftPressed) {
+			float diffX = (mouseX - x) / 800.f * -3.1415f;
+			float diffY = (mouseY - y) / 800.f * -3.1415f;
+			rotateMX = gwm::getRotMatrix4Y(diffX) * gwm::getRotMatrix4X(diffY) * rotateMX;
+			mouseX = x;
+			mouseY = y;
+			modelMX = translMX * rotateMX * scaleMX;
+		}
+		if (middlePressed) {
+			float diffX = (mouseX - x) / 800.f * -2.5f;
+			float diffY = (mouseY - y) / 800.f * 2.5f;
+			gwm::translate(translMX, gwm::Vec3(diffX, diffY, 0));
+			mouseX = x;
+			mouseY = y;
+			modelMX = translMX * rotateMX * scaleMX;
+		}
+		if (rightPressed) {
+			float diffX = (mouseX - x) / 800.f * -2.5f;
+			float diffY = (mouseY - y) / 800.f * 2.5f;
+			scaleMX = gwm::getScaleMatrix4(1.f + (diffX + diffY) / 2.f, 1.f + (diffX + diffY) / 2.f, 1.f + (diffX + diffY) / 2.f) * scaleMX;
+			mouseX = x;
+			mouseY = y;
+			modelMX = translMX * rotateMX * scaleMX;
+		}
 	}
 
 	void CubeMain::mouseButtonChanged(int button, int action, int modifiers) {
-
+		if (button == 0 || button == 1 || button == 2) {
+			std::pair<double, double> pos = Application::GetMousePosition();
+			mouseX = pos.first;
+			mouseY = pos.second;
+		}
 	}
 
 	void CubeMain::mouseScrolled(double x, double y) {
