@@ -8,16 +8,15 @@ namespace gwa {
 	class Application
 	{
 	public:
-		Application(const std::string& name);
-		void setMain(GwaMain* main);
+		Application(GwaMain *const main, const std::string& name);
+
 		virtual ~Application();
 		void run();
-
-		static Application& GetInstance() { return *s_Instance; }
 	private:
-		static Application* s_Instance;
-		friend int ::main(int argc, char** argv);
-
+		void initGLFW();
+		
+		GwaMain *const main;
+		const std::string name;
 	};
 	Application* createApplication();
 }

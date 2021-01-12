@@ -5,8 +5,8 @@ namespace gwa {
 	class SimpleCube : public Application {
 
 	public:
-		SimpleCube() : Application("SimpleCube"){
-			setMain(new CubeMain());
+		SimpleCube() : Application(new CubeMain(),"SimpleCube"){
+
 		}
 		~SimpleCube() {
 

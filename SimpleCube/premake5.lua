@@ -16,12 +16,14 @@ project "SimpleCube"
 	includedirs
 	{
 		"%{wks.location}/Gwathra/src",
+		"%{wks.location}/GwaMath/src",
 		"%{IncludeDir.glad}"
 	}
 
 	links 
 	{
 		"Gwathra",
+		"GwaMath",
 		"glad"
 	}
 		

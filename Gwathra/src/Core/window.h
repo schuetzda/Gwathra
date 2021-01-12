@@ -1,10 +1,20 @@
 #pragma once
+#include <stdint.h>
 
-#include "GLFW/glfw3.h"
+namespace gwa {
+	class Window
+	{
+	public:
+		Window(const char* title, const uint32_t width = 1920, const uint32_t height = 1080);
+		~Window();
 
-class window
-{
-private:
-	GLFWwindow* window;
-};
+		void update();
+		
+	private:
+		const char* title;
+		const unsigned int width, height;
+
+		void initWindow();
+	};
+}
 

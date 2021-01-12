@@ -1,24 +1,21 @@
 #pragma once
+#include <Windows.h>
+#include <iostream>
 
 namespace gwa {
 	class GwaMain
 	{
 	public:
-		virtual ~GwaMain() {
-			delete& instance;
-		}
-
-		static GwaMain* getInstance();
-
-		static void setInstance(GwaMain* main);
-
-
-		virtual void init() {}
-		virtual void render() {}
-		virtual void deactivate() {}
+		virtual ~GwaMain() {};
+		GwaMain() {};
+		virtual void init(){}
+		virtual void render(){}
+		virtual void deactivate(){}
 
 		virtual void windowSizeChanged(int width, int height) {}
+		virtual void cursorPositionChanged(double x, double y) {}
+		virtual void mouseButtonChanged(int button, int action, int modifiers) {}
+		virtual void mouseScrolled(double x, double y) {}
 	private:
-		static GwaMain* instance;
 	};
 }
