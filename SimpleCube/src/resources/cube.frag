@@ -1,4 +1,4 @@
-﻿#version 450 core
+#version 450 core
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 
