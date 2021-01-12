@@ -5,6 +5,7 @@ bin/
 !externals/bin/premake/
 
 # Files
+*.sln
 *.user
 **.vcxproj
 **.vcxproj.filters
