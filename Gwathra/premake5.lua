@@ -31,8 +31,7 @@ project "Gwathra"
 		defines 
 		{
 			"GWA_PLATFORM_WINDOWS",
-			"GWA_BUILD_DLL",
-			"SOLUTION_DIR=R"($(SolutionDir))""
+			"GWA_BUILD_DLL"
 		}
 
 	filter "configurations:Debug"

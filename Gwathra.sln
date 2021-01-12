@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{53E47842-3FC8-3998-A828-34EB942B241A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLFW", "Gwathra\externals\GLFW\GLFW.vcxproj", "{154B857C-0182-860D-AA6E-6C109684020F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glad", "Gwathra\externals\glad\glad.vcxproj", "{DD62977C-C999-980D-7286-7E105E9C140F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GwaMath", "GwaMath\GwaMath.vcxproj", "{CE87C379-3A67-4215-437F-CDEBAFDDA876}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gwathra", "Gwathra\Gwathra.vcxproj", "{1308D979-7FE7-5715-88FF-E2EBF45DBE76}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleCube", "SimpleCube\SimpleCube.vcxproj", "{8E09DF94-7AC1-20E2-E3C8-F93DCF9FBBD2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Dev|x64 = Dev|x64
+		Ship|x64 = Ship|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{154B857C-0182-860D-AA6E-6C109684020F}.Debug|x64.ActiveCfg = Debug|x64
+		{154B857C-0182-860D-AA6E-6C109684020F}.Debug|x64.Build.0 = Debug|x64
+		{154B857C-0182-860D-AA6E-6C109684020F}.Dev|x64.ActiveCfg = Dev|x64
+		{154B857C-0182-860D-AA6E-6C109684020F}.Dev|x64.Build.0 = Dev|x64
+		{154B857C-0182-860D-AA6E-6C109684020F}.Ship|x64.ActiveCfg = Ship|x64
+		{154B857C-0182-860D-AA6E-6C109684020F}.Ship|x64.Build.0 = Ship|x64
+		{DD62977C-C999-980D-7286-7E105E9C140F}.Debug|x64.ActiveCfg = Debug|x64
+		{DD62977C-C999-980D-7286-7E105E9C140F}.Debug|x64.Build.0 = Debug|x64
+		{DD62977C-C999-980D-7286-7E105E9C140F}.Dev|x64.ActiveCfg = Dev|x64
+		{DD62977C-C999-980D-7286-7E105E9C140F}.Dev|x64.Build.0 = Dev|x64
+		{DD62977C-C999-980D-7286-7E105E9C140F}.Ship|x64.ActiveCfg = Ship|x64
+		{DD62977C-C999-980D-7286-7E105E9C140F}.Ship|x64.Build.0 = Ship|x64
+		{CE87C379-3A67-4215-437F-CDEBAFDDA876}.Debug|x64.ActiveCfg = Debug|x64
+		{CE87C379-3A67-4215-437F-CDEBAFDDA876}.Debug|x64.Build.0 = Debug|x64
+		{CE87C379-3A67-4215-437F-CDEBAFDDA876}.Dev|x64.ActiveCfg = Dev|x64
+		{CE87C379-3A67-4215-437F-CDEBAFDDA876}.Dev|x64.Build.0 = Dev|x64
+		{CE87C379-3A67-4215-437F-CDEBAFDDA876}.Ship|x64.ActiveCfg = Ship|x64
+		{CE87C379-3A67-4215-437F-CDEBAFDDA876}.Ship|x64.Build.0 = Ship|x64
+		{1308D979-7FE7-5715-88FF-E2EBF45DBE76}.Debug|x64.ActiveCfg = Debug|x64
+		{1308D979-7FE7-5715-88FF-E2EBF45DBE76}.Debug|x64.Build.0 = Debug|x64
+		{1308D979-7FE7-5715-88FF-E2EBF45DBE76}.Dev|x64.ActiveCfg = Dev|x64
+		{1308D979-7FE7-5715-88FF-E2EBF45DBE76}.Dev|x64.Build.0 = Dev|x64
+		{1308D979-7FE7-5715-88FF-E2EBF45DBE76}.Ship|x64.ActiveCfg = Ship|x64
+		{1308D979-7FE7-5715-88FF-E2EBF45DBE76}.Ship|x64.Build.0 = Ship|x64
+		{8E09DF94-7AC1-20E2-E3C8-F93DCF9FBBD2}.Debug|x64.ActiveCfg = Debug|x64
+		{8E09DF94-7AC1-20E2-E3C8-F93DCF9FBBD2}.Debug|x64.Build.0 = Debug|x64
+		{8E09DF94-7AC1-20E2-E3C8-F93DCF9FBBD2}.Dev|x64.ActiveCfg = Dev|x64
+		{8E09DF94-7AC1-20E2-E3C8-F93DCF9FBBD2}.Dev|x64.Build.0 = Dev|x64
+		{8E09DF94-7AC1-20E2-E3C8-F93DCF9FBBD2}.Ship|x64.ActiveCfg = Ship|x64
+		{8E09DF94-7AC1-20E2-E3C8-F93DCF9FBBD2}.Ship|x64.Build.0 = Ship|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{154B857C-0182-860D-AA6E-6C109684020F} = {53E47842-3FC8-3998-A828-34EB942B241A}
+		{DD62977C-C999-980D-7286-7E105E9C140F} = {53E47842-3FC8-3998-A828-34EB942B241A}
+	EndGlobalSection
+EndGlobal
