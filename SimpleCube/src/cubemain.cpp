@@ -2,7 +2,7 @@
 #include "cubemain.h"
 
 namespace gwa {
-	CubeMain::CubeMain() : GwaMain() {
+	CubeMain::CubeMain() : GwaMain(), mouseX(0.), mouseY(0.) {
 		
 	}
 
@@ -50,8 +50,7 @@ namespace gwa {
 		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 		};
-		TCHAR buffer[MAX_PATH] = { 0 };
-		GetModuleFileName(NULL, buffer, MAX_PATH);
+
 		std::string shaderPath = "src/resources/";
 		std::string vertexShaderPath = shaderPath + "cube.vert";
 		std::string fragShaderPath = shaderPath + "cube.frag";
@@ -108,24 +107,24 @@ namespace gwa {
 		bool middlePressed = Application::IsMouseButtonPressed(2);
 		bool rightPressed = Application::IsMouseButtonPressed(1);
 		if (leftPressed) {
-			float diffX = (mouseX - x) / 800.f * -3.1415f;
-			float diffY = (mouseY - y) / 800.f * -3.1415f;
+			float diffX = static_cast<float>(mouseX - x) / 800.f * -3.1415f;
+			float diffY = static_cast<float>(mouseY - y) / 800.f * -3.1415f;
 			rotateMX = gwm::getRotMatrix4Y(diffX) * gwm::getRotMatrix4X(diffY) * rotateMX;
 			mouseX = x;
 			mouseY = y;
 			modelMX = translMX * rotateMX * scaleMX;
 		}
 		if (middlePressed) {
-			float diffX = (mouseX - x) / 800.f * -2.5f;
-			float diffY = (mouseY - y) / 800.f * 2.5f;
+			float diffX = static_cast<float>(mouseX - x) / 800.f * -2.5f;
+			float diffY = static_cast<float>(mouseY - y) / 800.f * 2.5f;
 			gwm::translate(translMX, gwm::Vec3(diffX, diffY, 0));
 			mouseX = x;
 			mouseY = y;
 			modelMX = translMX * rotateMX * scaleMX;
 		}
 		if (rightPressed) {
-			float diffX = (mouseX - x) / 800.f * -2.5f;
-			float diffY = (mouseY - y) / 800.f * 2.5f;
+			float diffX = static_cast<float>(mouseX - x) / 800.f * -2.5f;
+			float diffY = static_cast<float>(mouseY - y) / 800.f * 2.5f;
 			scaleMX = gwm::getScaleMatrix4(1.f + (diffX + diffY) / 2.f, 1.f + (diffX + diffY) / 2.f, 1.f + (diffX + diffY) / 2.f) * scaleMX;
 			mouseX = x;
 			mouseY = y;

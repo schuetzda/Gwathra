@@ -10,7 +10,7 @@ in vec3 uv;
 in vec3 normal;
 void main()
 {
-	int tiles = 10;
+	int tiles = 9;
 	float epsilon = 0.0000005f*(tiles);
     float cx = floor(tiles*uv.x-epsilon);
 	float cy = floor(tiles*uv.y-epsilon);
@@ -33,5 +33,5 @@ void main()
 	vec3 specular = spec*vec3(1,1,0.63);
 	ivec2 coord = ivec2(gl_FragCoord.xy);
 
-	fragColor = vec4(ambient+diffuse+specular,1);
+	fragColor = vec4(ambient+diffuse+specular,1.f);
 } 

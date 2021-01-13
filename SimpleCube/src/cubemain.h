@@ -22,9 +22,9 @@ namespace gwa {
 		VertexArray vaTriangle;
 		Shader shaderTriangle;
 		double mouseX, mouseY;
-		float wWidth = 1920;
-		float wHeight = 1080;
-		float aspectRatio = wWidth / wHeight;
+		uint32_t wWidth = 1920;
+		uint32_t wHeight = 1080;
+		float aspectRatio = wWidth / static_cast<float>(wHeight);
 
 		bool mouseLeftDown = false;
 		bool mouseMiddleDown = false;
