@@ -21,7 +21,7 @@ namespace gwa {
 		
 		initGLFW();
 		
-		window = glfwCreateWindow(SCR_WIDTH, 1080, "SimpleCubeRenderer", NULL, NULL);
+		window = glfwCreateWindow(SCR_WIDTH, 1080, name.c_str(), NULL, NULL);
 
 		if (window == NULL)
 		{

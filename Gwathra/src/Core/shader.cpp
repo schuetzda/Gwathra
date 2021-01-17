@@ -14,14 +14,29 @@ void Shader::create(const char* vertexShaderPath, const char* fragmentShaderPath
 
 }
 
-void Shader::create(const char* vertexShaderPath, const char* geometryShaderPath, const char* fragmentShaderPath) {
+void Shader::create(const char* vertexShaderPath, const char* fragmentShaderPath, const char* geometryShaderPath) {
 	GLuint vertexShader = loadShader(vertexShaderPath, GL_VERTEX_SHADER, "VertexShader");
 	GLuint fragmentShader = loadShader(fragmentShaderPath, GL_FRAGMENT_SHADER, "FragmentShader");
 	GLuint geometryShader = loadShader(geometryShaderPath, GL_GEOMETRY_SHADER, "GeometryShader");
 	loadProgram(vertexShader, fragmentShader, geometryShader);
 }
 
-void Shader::loadProgram(GLuint vertexShader, GLuint fragmentShader, GLuint geometryShader) {
+void Shader::create(const char* vertexShaderPath, const char* fragmentShaderPath, const char* geometryShaderPath = "\0", const char* computeShaderPath="\0") {
+	GLuint vertexShader = loadShader(vertexShaderPath, GL_VERTEX_SHADER, "VertexShader");
+	GLuint fragmentShader = loadShader(fragmentShaderPath, GL_FRAGMENT_SHADER, "FragmentShader");
+
+	GLuint geometryShader = 0, computerShader = 0;
+	if (geometryShaderPath == "\0") {
+		geometryShader = loadShader(geometryShaderPath, GL_GEOMETRY_SHADER, "GeometryShader");
+	}
+
+	if (computeShaderPath == "\0") {
+		computerShader = loadShader(computeShaderPath, GL_COMPUTE_SHADER, "ComputeShader");
+	}
+	loadProgram(vertexShader, fragmentShader, geometryShader);
+}
+
+void Shader::loadProgram(GLuint vertexShader, GLuint fragmentShader, GLuint geometryShader, GLuint computeShader) {
 	this->programID = glCreateProgram();
 
 	glAttachShader(programID, vertexShader);

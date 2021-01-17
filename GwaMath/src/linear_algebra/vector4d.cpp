@@ -1,5 +1,6 @@
 #include "vector4d.h"
 #include <math.h>
+#include "fastcalc.h"
 
 namespace gwm
 {
@@ -77,11 +78,12 @@ namespace gwm
 
 	void normalize(Vec4& v)
 	{
-		float mag = magnitude(v);
-		v.x /= mag;
-		v.y /= mag;
-		v.z /= mag;
-		v.w /= mag;
+		const float mag = v.x * v.x + v.y * v.y + v.z * v.z;
+		const float inv_length = fast_rsqrt(mag);
+		v.x *= inv_length;
+		v.y *= inv_length;
+		v.z *= inv_length;
+		v.w *= inv_length;
 	}
 
 	const float dot(const Vec4& a, const Vec4& b)
