@@ -17,7 +17,11 @@ namespace gwa {
 		virtual void mouseScrolled(double x, double y);
 
 	private:
-		Shader screenShader;
+		void initComputeShaderTex();
+
+		Shader screenShader, computeShader;
 		VertexArray screenVA;
+		uint32_t m_width, m_height;
+		GLuint tex_output;
 	};
 }

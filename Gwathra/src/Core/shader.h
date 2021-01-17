@@ -5,6 +5,7 @@ class Shader
 public:
 	Shader() {}
 	void create(const char* vertexShaderPath, const char* fragmentShaderPath);
+	void create(const char* computeShaderPath);
 	void create(const char* vertexShaderPath,  const char* fragmentShaderPath, const char* geometryShaderPath);
 	void create(const char* vertexShaderPath, const char* fragmentShaderPath, const char* geometryShaderPath, const char* computeShaderPath);
 

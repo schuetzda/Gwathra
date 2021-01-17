@@ -30,7 +30,7 @@ namespace gwa {
 		}
 
 		glfwMakeContextCurrent(window);
-
+		
 		// glad: load all OpenGL function pointers
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{

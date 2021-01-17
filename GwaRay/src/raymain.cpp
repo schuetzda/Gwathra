@@ -2,7 +2,7 @@
 
 namespace gwa {
 
-	RayMain::RayMain() : GwaMain(){
+	RayMain::RayMain() : GwaMain(), m_height(1080), m_width(1920), tex_output(0){
 		
 	}
 
@@ -15,15 +15,20 @@ namespace gwa {
 
 		const std::string screenVertShaderPath = std::string("src/resources/screen.vert");
 		const std::string screenFragShaderPath = std::string("src/resources/screen.frag");
-
+		const std::string rayTracerComputeShaderPath = std::string("src/resources/raytracer.comp");
 		screenShader.create(screenVertShaderPath.c_str(), screenFragShaderPath.c_str());
 		
 		screenVA.create(3);
 		screenVA.setArrayBuffer(0, GL_FLOAT, 2, 2, fullSreenTriangle, sizeof(float));
+		computeShader.create(rayTracerComputeShaderPath.c_str());
+		computeShader.bind();
+		initComputeShaderTex();
 	}
 	void RayMain::render() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		computeShader.bind();
 		screenShader.bind();
 		screenVA.bind();
 		glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -35,6 +40,8 @@ namespace gwa {
 
 	void RayMain::windowSizeChanged(int width, int height) {
 		glViewport(0, 0, width, height);
+		m_width = width;
+		m_height = height;
 	}
 	void RayMain::cursorPositionChanged(double x, double y) {
 
@@ -44,5 +51,19 @@ namespace gwa {
 	}
 	void RayMain::mouseScrolled(double x, double y) {
 
+	}
+
+	void RayMain::initComputeShaderTex() {
+		//Window Tex
+		glEnable(GL_TEXTURE_2D);
+		glGenTextures(1, &tex_output);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, tex_output);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_width, m_height, 0, GL_RGBA, GL_FLOAT,	NULL);
+		glBindImageTexture(1, tex_output, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	}
 }

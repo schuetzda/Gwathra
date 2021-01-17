@@ -14,6 +14,11 @@ void Shader::create(const char* vertexShaderPath, const char* fragmentShaderPath
 
 }
 
+void Shader::create(const char* computeShaderPath) {
+	GLuint computeShader = loadShader(computeShaderPath, GL_COMPUTE_SHADER, "Compute Shader");
+	loadProgram(0,0,0, computeShader);
+}
+
 void Shader::create(const char* vertexShaderPath, const char* fragmentShaderPath, const char* geometryShaderPath) {
 	GLuint vertexShader = loadShader(vertexShaderPath, GL_VERTEX_SHADER, "VertexShader");
 	GLuint fragmentShader = loadShader(fragmentShaderPath, GL_FRAGMENT_SHADER, "FragmentShader");
@@ -38,11 +43,17 @@ void Shader::create(const char* vertexShaderPath, const char* fragmentShaderPath
 
 void Shader::loadProgram(GLuint vertexShader, GLuint fragmentShader, GLuint geometryShader, GLuint computeShader) {
 	this->programID = glCreateProgram();
-
-	glAttachShader(programID, vertexShader);
-	glAttachShader(programID, fragmentShader);
-	if (geometryShader > 0) {
+	if (vertexShader) {
+		glAttachShader(programID, vertexShader);
+	}
+	if (fragmentShader) {
+		glAttachShader(programID, fragmentShader);
+	}
+	if (geometryShader) {
 		glAttachShader(programID, geometryShader);
+	}
+	if (computeShader) {
+		glAttachShader(programID, computeShader);
 	}
 	glLinkProgram(programID);
 
@@ -59,9 +70,11 @@ void Shader::loadProgram(GLuint vertexShader, GLuint fragmentShader, GLuint geom
 
 		std::cerr << "----------" << std::endl << "Error compiling Program: " << &infoLog[0] << std::endl;
 	}
+
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 	glDeleteShader(geometryShader);
+	glDeleteShader(computeShader);
 }
 
 void Shader::bind() {
