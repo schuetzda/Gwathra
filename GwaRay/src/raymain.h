@@ -15,5 +15,9 @@ namespace gwa {
 		virtual void cursorPositionChanged(double x, double y);
 		virtual void mouseButtonChanged(int button, int action, int modifiers);
 		virtual void mouseScrolled(double x, double y);
+
+	private:
+		Shader screenShader;
+		VertexArray screenVA;
 	};
 }

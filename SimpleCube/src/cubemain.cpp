@@ -51,9 +51,9 @@ namespace gwa {
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 		};
 
-		std::string shaderPath = "src/resources/";
-		std::string vertexShaderPath = shaderPath + "cube.vert";
-		std::string fragShaderPath = shaderPath + "cube.frag";
+		const std::string shaderPath = "src/resources/";
+		const std::string vertexShaderPath = shaderPath + "cube.vert";
+		const std::string fragShaderPath = shaderPath + "cube.frag";
 
 		shaderTriangle.create(vertexShaderPath.c_str(), fragShaderPath.c_str());
 		vaTriangle.create(36);
@@ -80,7 +80,7 @@ namespace gwa {
 		gwm::Mat4h invViewMX = gwm::inverse(viewMX);
 		glUniform3f(shaderTriangle.getUniformLocation("viewPos"), invViewMX(0, 3), invViewMX(1, 3), invViewMX(2, 3));
 		vaTriangle.bind();
-		//glDisable(GL_DEPTH_TEST);
+
 		glClear(GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glStencilFunc(GL_ALWAYS, 0, 0);
 		glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
