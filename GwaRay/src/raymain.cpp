@@ -21,15 +21,24 @@ namespace gwa {
 		screenVA.create(3);
 		screenVA.setArrayBuffer(0, GL_FLOAT, 2, 2, fullSreenTriangle, sizeof(float));
 		computeShader.create(rayTracerComputeShaderPath.c_str());
-		computeShader.bind();
 		initComputeShaderTex();
+		computeShader.bind();
+		glBindImageTexture(0, tex_output, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	}
 	void RayMain::render() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		computeShader.bind();
+		glDispatchCompute((GLuint)m_width, (GLuint)m_height, 1);
+
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		screenShader.bind();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, tex_output);
+		glUniform1i(screenShader.getUniformLocation("tex"), 0);
 		screenVA.bind();
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		screenVA.release();
@@ -64,6 +73,5 @@ namespace gwa {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_width, m_height, 0, GL_RGBA, GL_FLOAT,	NULL);
-		glBindImageTexture(1, tex_output, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	}
 }
