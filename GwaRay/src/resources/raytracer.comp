@@ -1,17 +1,37 @@
 #version 440
-layout(local_size_x = 1, local_size_y = 1) in;
+layout(local_size_x = 16, local_size_y = 8) in;
 layout(rgba32f, binding = 0) uniform image2D img_output;
 
+uniform mat4 invViewMX;
+uniform mat4 invProjMX;
+uniform mat4 camPos;
+
+bool hit_sphere(const vec3 center, float radius, const vec3 r){
+    vec3 oc = -center;
+    float a = dot(r, r);
+    float b = 2.0 * dot(oc, r);
+    float c = dot(oc,oc) - radius*radius;
+    float discriminant = b*b - 4*a*c;
+    return (discriminant>0);
+}
+
+
 void main() {
-  // base pixel colour for image
-  vec4 pixel = vec4(1.0, 1.0, 0.0, 1.0);
-  // get index in global work group i.e x,y position
-  ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
-  
-  //
-  // interesting stuff happens here later
-  //
-  
-  // output to a specific pixel in the image
-  imageStore(img_output, pixel_coords, pixel);
+    // base pixel colour for image
+    vec4 pixel = vec4(1.0, 1.0, 0.0, 1.0);
+    // get index in global work group i.e x,y position
+    ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
+
+
+    ivec2 dims = imageSize(img_output); // fetch image dimensions
+    float aspectRatio = dims.x / float(dims.y);
+    vec2 screen_cords = (pixel_coords+0.5f)/vec2(dims.x,dims.y)*2.f - 1.f;
+
+    const vec3 target = (invProjMX * vec4(screen_cords,-1.f,1.f)).xyz;
+    const vec3 ray = (invViewMX * vec4(target,0.f)).xyz;
+    if (hit_sphere(vec3(0.f,0.f,5.f),0.5f,ray)) {
+        pixel = vec4(0.f,0.f,1.f,1.f);
+    }
+    // output to a specific pixel in the image
+    imageStore(img_output, pixel_coords, pixel);
 }

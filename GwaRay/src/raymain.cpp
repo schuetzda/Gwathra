@@ -1,5 +1,5 @@
 #include "raymain.h"
-
+#include "gwm.h"
 namespace gwa {
 
 	RayMain::RayMain() : GwaMain(), m_height(1080), m_width(1920), tex_output(0){
@@ -26,10 +26,20 @@ namespace gwa {
 		glBindImageTexture(0, tex_output, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	}
 	void RayMain::render() {
+		//View/Projection Matrices
+		gwm::Mat4h viewMX = gwm::Mat4h(1.f);
+		gwm::translate(viewMX, gwm::Vec3(0.0f, 0.f, -10.f));
+		const gwm::Mat4 projMX = gwm::getProjectionMat(0.4f, m_width / static_cast<float>(m_height), 0.1f, 100.f);
+		const gwm::Mat4 invProjMX = gwm::inverse(projMX);
+		const gwm::Mat4h invViewMX = gwm::inverse(viewMX);
+
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		computeShader.bind();
+		glUniformMatrix4fv(computeShader.getUniformLocation("invViewMX"), 1, GL_FALSE, *invViewMX.n);
+		glUniformMatrix4fv(computeShader.getUniformLocation("invProjMX"), 1, GL_FALSE, *invProjMX.n);
+
 		glDispatchCompute((GLuint)m_width, (GLuint)m_height, 1);
 
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
