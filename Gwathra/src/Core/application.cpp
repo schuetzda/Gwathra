@@ -77,7 +77,7 @@ namespace gwa {
 			glfwPollEvents();
 			glfwSwapBuffers(window);
 			double currentTime = glfwGetTime();
-			std::cout << currentTime - previousTime<< std::endl;
+			std::cout << currentTime - previousTime << "\n";
 			previousTime = currentTime;
 		}
 

@@ -1,8 +1,9 @@
 #include "raymain.h"
 #include "gwm.h"
+
 namespace gwa {
 
-	RayMain::RayMain() : GwaMain(), m_height(1080), m_width(1920), tex_output(0){
+	RayMain::RayMain() : GwaMain(), m_height(1080), m_width(1920), tex_out(0), seed(0){
 		
 	}
 
@@ -21,37 +22,38 @@ namespace gwa {
 		screenVA.create(3);
 		screenVA.setArrayBuffer(0, GL_FLOAT, 2, 2, fullSreenTriangle, sizeof(float));
 		computeShader.create(rayTracerComputeShaderPath.c_str());
-		initComputeShaderTex();
-		computeShader.bind();
-		glBindImageTexture(0, tex_output, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+		initComputeShaderTex();		
+		glBindImageTexture(0, tex_out, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 	}
 	void RayMain::render() {
 		//View/Projection Matrices
 		gwm::Mat4h viewMX = gwm::Mat4h(1.f);
 		gwm::translate(viewMX, gwm::Vec3(0.0f, 0.f, -10.f));
 		const gwm::Mat4 projMX = gwm::getProjectionMat(0.4f, m_width / static_cast<float>(m_height), 0.1f, 100.f);
-		const gwm::Mat4 invProjMX = gwm::inverse(projMX);
-		const gwm::Mat4h invViewMX = gwm::inverse(viewMX);
-
+		const gwm::Mat4 invProjViewMX = gwm::inverse(projMX * viewMX);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		computeShader.bind();
-		glUniformMatrix4fv(computeShader.getUniformLocation("invViewMX"), 1, GL_FALSE, *invViewMX.n);
-		glUniformMatrix4fv(computeShader.getUniformLocation("invProjMX"), 1, GL_FALSE, *invProjMX.n);
-
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, tex_out);
+		glUniform1i(screenShader.getUniformLocation("tex"), 0);
+		glUniform1ui(computeShader.getUniformLocation("seed"), seed);
+		glUniformMatrix4fv(computeShader.getUniformLocation("invProjViewMX"), 1, GL_FALSE, *invProjViewMX.n);
 		glDispatchCompute((GLuint)m_width, (GLuint)m_height, 1);
-
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		screenShader.bind();
+
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, tex_output);
+		glBindTexture(GL_TEXTURE_2D, tex_out);
 		glUniform1i(screenShader.getUniformLocation("tex"), 0);
 		screenVA.bind();
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		screenVA.release();
+
+		seed++;
 	}
 	void RayMain::deactivate() {
 
@@ -61,6 +63,7 @@ namespace gwa {
 		glViewport(0, 0, width, height);
 		m_width = width;
 		m_height = height;
+		seed = 0;
 	}
 	void RayMain::cursorPositionChanged(double x, double y) {
 
@@ -75,13 +78,23 @@ namespace gwa {
 	void RayMain::initComputeShaderTex() {
 		//Window Tex
 		glEnable(GL_TEXTURE_2D);
-		glGenTextures(1, &tex_output);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, tex_output);
+		glGenTextures(1, &tex_out);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, tex_out);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_width, m_height, 0, GL_RGBA, GL_FLOAT,	NULL);
+
+		glEnable(GL_TEXTURE_2D);
+		glGenTextures(1, &tex_in);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, tex_in);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_width, m_height, 0, GL_RGBA, GL_FLOAT, NULL);
 	}
 }

@@ -94,9 +94,9 @@ namespace gwm {
 	}
 
 	void translate(Mat4& m, Vec3 transl) {
-		m.n[3][0] += transl.x;
-		m.n[3][1] += transl.y;
-		m.n[3][2] += transl.z;
+		m.n[0][3] += transl.x;
+		m.n[1][3] += transl.y;
+		m.n[2][3] += transl.z;
 	}
 
 	void setTranslation(Mat4& m, Vec3 transl) {
