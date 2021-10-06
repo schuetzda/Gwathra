@@ -33,5 +33,6 @@ void main()
 	vec3 specular = spec*vec3(1,1,0.63);
 	ivec2 coord = ivec2(gl_FragCoord.xy);
 
-	fragColor = vec4(ambient+diffuse+specular,1.f);
+	//fragColor = vec4(ambient+diffuse+specular,1.f);
+	fragColor = vec4(1,0,1,1);
 } 

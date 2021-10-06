@@ -3,7 +3,7 @@
 
 namespace gwa {
 
-	RayMain::RayMain() : GwaMain(), m_height(1080), m_width(1920), tex_out(0), seed(0){
+	RayMain::RayMain() : GwaMain(), m_height(1080), m_width(1920), tex_out(0), seed(0), tex_in(0){
 		
 	}
 
@@ -38,7 +38,7 @@ namespace gwa {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, tex_out);
 		glUniform1i(screenShader.getUniformLocation("tex"), 0);
-		glUniform1ui(computeShader.getUniformLocation("seed"), seed);
+		glUniform1ui(computeShader.getUniformLocation("sampleCount"), seed);
 		glUniformMatrix4fv(computeShader.getUniformLocation("invProjViewMX"), 1, GL_FALSE, *invProjViewMX.n);
 		glDispatchCompute((GLuint)m_width, (GLuint)m_height, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
@@ -63,6 +63,12 @@ namespace gwa {
 		glViewport(0, 0, width, height);
 		m_width = width;
 		m_height = height;
+
+		glBindTexture(GL_TEXTURE_2D, tex_out);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_width, m_height, 0, GL_RGBA, GL_FLOAT, NULL);
+		glBindTexture(GL_TEXTURE_2D, tex_in);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_width, m_height, 0, GL_RGBA, GL_FLOAT, NULL);
+
 		seed = 0;
 	}
 	void RayMain::cursorPositionChanged(double x, double y) {

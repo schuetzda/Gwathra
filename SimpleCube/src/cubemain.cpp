@@ -85,7 +85,7 @@ namespace gwa {
 		glStencilFunc(GL_ALWAYS, 0, 0);
 		glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
 
-		glEnable(GL_STENCIL_TEST);
+		//glEnable(GL_STENCIL_TEST);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		vaTriangle.release();

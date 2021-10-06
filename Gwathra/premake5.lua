@@ -16,6 +16,7 @@ project "Gwathra"
 	includedirs
 	{
 		"%{IncludeDir.GLFW}",
+		"%{wks.location}/GwaMath/src",
 		"%{IncludeDir.glad}"
 	}
 	
@@ -24,6 +25,7 @@ project "Gwathra"
 		"GLFW",
 		"glad",
 		"opengl32.lib"
+		"GwaMath"
 	}
 	
 	filter "system:windows"

@@ -21,7 +21,7 @@ namespace gwa {
 		
 		initGLFW();
 		
-		window = glfwCreateWindow(SCR_WIDTH, 1080, name.c_str(), NULL, NULL);
+		window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, name.c_str(), NULL, NULL);
 
 		if (window == NULL)
 		{
@@ -71,14 +71,23 @@ namespace gwa {
 		
 		main->init();
 		double previousTime = glfwGetTime();
+		double avg100 = 0.;
+		int count = 1;
 		while (!glfwWindowShouldClose(window))
 		{
 			main->render();
 			glfwPollEvents();
 			glfwSwapBuffers(window);
 			double currentTime = glfwGetTime();
-			std::cout << currentTime - previousTime << "\n";
+			//std::cout << currentTime - previousTime << "\n";
+			avg100 += currentTime - previousTime;
 			previousTime = currentTime;
+			if (count % 50 == 0) {
+				count = 0;
+				std::cout << avg100/50. << " ("<< (1.f/(avg100/50))<<")  " << "\n";
+				avg100 = 0.;
+			}
+			count++;
 		}
 
 		main->deactivate();

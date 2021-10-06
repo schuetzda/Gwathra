@@ -2,17 +2,17 @@
 #include "raymain.h"
 #include "Core/entrypoint.h"
 namespace gwa {
-	class SimpleCube : public Application {
+	class GwaRay : public Application {
 
 	public:
-		SimpleCube() : Application(new RayMain(), "RayTracer") {
+		GwaRay() : Application(new RayMain(), "RayTracerino") {
 
 		}
-		~SimpleCube() {
+		~GwaRay() {
 
 		}
 	};
 	Application* createApplication() {
-		return new SimpleCube();
+		return new GwaRay();
 	}
 }

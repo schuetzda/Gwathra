@@ -1,18 +1,22 @@
-#version 440
+#version 450
 layout(local_size_x = 1, local_size_y = 1) in;
 layout(rgba32f, binding = 0) uniform image2D img_output;
 
 uniform sampler2D tex;
-uniform unsigned int seed;
+uniform uint sampleCount;
 uniform mat4 invProjViewMX;
 uniform mat4 camPos;
 
-float hit_sphere(const vec3 origin, const vec3 center, float radius, const vec3 r){
-    vec3 oc = origin - center;
-    float a = dot(r, r);
-    float half_b = dot(oc, r);
-    float c = dot(oc,oc) - radius*radius;
-    float discriminant = half_b*half_b - a*c;
+vec3 p;
+const vec2 s16[] = {{0.5625f, 0.4375f}, {0.4375f, 0.6875f}, {0.3125f, 0.375f}, {0.75f, 0.5625f}, {0.1875f, 0.625f}, {0.625f, 0.1875f}, {0.1875f, 0.3125f}, {0.6875f, 0.8125f}, {0.375f, 0.125f}, {0.5f, 0.9375f}, {0.25f, 0.875f}, {0.125f, 0.25f}, {0.0f, 0.5f}, {0.9375f, 0.75f},
+{0.875f, 0.0625f}, {0.0625f, 0.0f}};
+
+float hit_sphere(const vec3 origin, const vec3 center, const float radius, const vec3 r){
+    const vec3 oc = origin - center;
+    const float a = dot(r, r);
+    const float half_b = dot(oc, r);
+    const float c = dot(oc,oc) - radius*radius;
+    const float discriminant = half_b*half_b - a*c;
     if (discriminant < 0) {
         return -1.0f;
     } else {
@@ -20,81 +24,65 @@ float hit_sphere(const vec3 origin, const vec3 center, float radius, const vec3 
     }
 }
 
-// https://www.shadertoy.com/view/XsX3zB
-//The MIT License
-// Copyright © 2013 Nikita Miropolskiy
-vec3 random3(vec3 c) {
-	float j = 4096.0*sin(dot(c,vec3(17.0, 59.4, 15.0)));
-	vec3 r;
-	r.z = fract(512.0*j);
-	j *= .125;
-	r.x = fract(512.0*j);
-	j *= .125;
-	r.y = fract(512.0*j);
-	return r-0.5;
+float hit_triangle(const vec3 origin, const vec3 dir, const vec3 t0, const vec3 t1, const vec3 t2) {
+    const vec3 e1 = t1-t0;
+    const vec3 e2 = t2-t0;
+
+    const vec3 q = cross(dir, e2);
+    const float a = dot(e1,q);
+
+    if (a>-0.0001f && a < 0.0001f)
+        return -1;
+    const float f = 1.f/a;
+
+    const vec3 s = origin - t0;
+    const float u = f*dot(s,q);
+    if (u < 0.0f)
+        return -1;
+    const vec3 r = cross(s, e1);
+    const float v = f*dot(dir,r);
+    if (v < 0.f || u + v > 1.f)
+        return -1;
+    const float t = f*dot(e2,r);
+    return t;
 }
 
-const float F3 =  0.3333333;
-const float G3 =  0.1666667;
-float snoise(vec3 p) {
-	 /* 1. find current tetrahedron T and it's four vertices */
-	 /* s, s+i1, s+i2, s+1.0 - absolute skewed (integer) coordinates of T vertices */
-	 /* x, x1, x2, x3 - unskewed coordinates of p relative to each of T vertices*/
-	 
-	 /* calculate s and x */
-	 vec3 s = floor(p + dot(p, vec3(F3)));
-	 vec3 x = p - s + dot(s, vec3(G3));
-	 
-	 /* calculate i1 and i2 */
-	 vec3 e = step(vec3(0.0), x - x.yzx);
-	 vec3 i1 = e*(1.0 - e.zxy);
-	 vec3 i2 = 1.0 - e.zxy*(1.0 - e);
-	 	
-	 /* x1, x2, x3 */
-	 vec3 x1 = x - i1 + G3;
-	 vec3 x2 = x - i2 + 2.0*G3;
-	 vec3 x3 = x - 1.0 + 3.0*G3;
-	 
-	 /* 2. find four surflets and store them in d */
-	 vec4 w, d;
-	 
-	 /* calculate surflet weights */
-	 w.x = dot(x, x);
-	 w.y = dot(x1, x1);
-	 w.z = dot(x2, x2);
-	 w.w = dot(x3, x3);
-	 
-	 /* w fades from 0.6 at the center of the surflet to 0.0 at the margin */
-	 w = max(0.6 - w, 0.0);
-	 
-	 /* calculate surflet components */
-	 d.x = dot(random3(s), x);
-	 d.y = dot(random3(s + i1), x1);
-	 d.z = dot(random3(s + i2), x2);
-	 d.w = dot(random3(s + 1.0), x3);
-	 
-	 /* multiply d by w^4 */
-	 w *= w;
-	 w *= w;
-	 d *= w;
-	 
-	 /* 3. return the sum of the four surflets */
-	 return dot(d, vec4(52.0))*0.5f+0.5f;
+float hit_plane(const vec3 origin, const vec3 ray, const vec3 p_normal, const vec3 p_center) {
+    float denom = dot(p_normal,ray);
+    if (abs(denom) > 0.0001f)
+    {
+        float t = dot(p_center - origin,p_normal) / denom;
+        if (t >= 0) return t;
+    }
+    return -1.f;
 }
 
-/* const matrices for 3d rotation */
-const mat3 rot1 = mat3(-0.37, 0.36, 0.85,-0.14,-0.93, 0.34,0.92, 0.01,0.4);
-const mat3 rot2 = mat3(-0.55,-0.39, 0.74, 0.33,-0.91,-0.24,0.77, 0.12,0.63);
-const mat3 rot3 = mat3(-0.71, 0.52,-0.47,-0.08,-0.72,-0.68,-0.7,-0.45,0.56);
-
-/* directional artifacts can be reduced by rotating each octave */
-float simplex3d_fractal(vec3 m) {
-    return   0.5333333*snoise(m*rot1)
-			+0.2666667*snoise(2.0*m*rot2)
-			+0.1333333*snoise(4.0*m*rot3)
-			+0.0666667*snoise(8.0*m);
+uint pcg_hash(uint seed)
+{
+    uint state = seed * 747796405u + 2891336453u;
+    uint word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+    return (word >> 22u) ^ word;
 }
 
+
+float random(int pixel_i, int pixel_j, int sampleIndex, int sampleDimension)
+{
+    uint seed = pcg_hash(pixel_i);
+    seed = pcg_hash(seed + pcg_hash(pixel_j));
+    seed = pcg_hash(seed + pcg_hash(sampleIndex));
+    seed = pcg_hash(seed + pcg_hash(sampleDimension));
+    return seed * 2.3283064365386963e-10f;
+}
+
+vec3 random_in_unit_sphere(){
+    p = vec3(0.1,0.1,0.1f);
+   while ( dot(p,p) >= 1.f);{
+        p = 2.f* vec3(random(int(gl_GlobalInvocationID.x), int(gl_GlobalInvocationID.y), 3, int(sampleCount)),
+                      random(int(gl_GlobalInvocationID.x), int(gl_GlobalInvocationID.y), 1, int(sampleCount)),
+                      random(int(gl_GlobalInvocationID.x), int(gl_GlobalInvocationID.y), 2, int(sampleCount))) - vec3(1,1,1);
+    }
+    return p;
+}
 
 void main() {
     // base pixel colour for image
@@ -109,29 +97,30 @@ void main() {
 
     const vec3 sphere1_center = vec3(0.f,0.f,-5.f);
     const vec3 sphere2_center = vec3(0.f,-100.5f,-5.f);
-
-    const vec2 tex_coords = pixel_coords/vec2(dims);
-
-    vec2 sampleCoords = vec2(pixel_coords.x+snoise(vec3(tex_coords*500.f,seed)), pixel_coords.y+snoise(vec3(tex_coords*500.f+500.f,seed)));
-
-    sampleCoords = sampleCoords/vec2(dims.x,dims.y);
-    const vec2 screen_coords = sampleCoords *2.f -1.f;
-    const vec3 ray = (invProjViewMX * vec4(screen_coords*depth,sum,depth)).xyz;
-    
+    const vec2 sample_coords = (pixel_coords+vec2(random(int(pixel_coords.x),1, int(pixel_coords.y), int(sampleCount)),random(int(pixel_coords.x),2, int(pixel_coords.y), int(sampleCount))))/vec2(dims.x,dims.y);
+    const vec2 screen_coords = sample_coords *2.f -1.f;
+    const vec3 ray = ((invProjViewMX * vec4(screen_coords*depth,sum,depth)).xyz);
     const float sphere1_t = hit_sphere(vec3(0,0,0),sphere1_center,0.5f,ray);
     const float sphere2_t = hit_sphere(vec3(0,0,0),sphere2_center,100.f,ray);
-
-
+    const float triangle = hit_triangle(vec3(0,0,0),ray,vec3(0.5,-0.5,-2.5),vec3(-0.5,-0.5,-55.5),vec3(0.5,0.5,-2.5));
+    const float plane1_t = -hit_rectangle(vec3(0,0,0),ray,vec3(0.f,2.f,0.f),vec3(0.f,2.f,0.f));
+    
     if (sphere1_t > 0.f && (sphere1_t < sphere2_t || sphere2_t <= 0.f)) {
-        pixel = vec4(0.5*(1+normalize(sphere1_t*ray - sphere1_center)),1.f);
+        //pixel = vec4(0.5*(1+normalize(sphere1_t*ray - sphere1_center)),1.f);
+        pixel = vec4(sphere1_t);
     } else {    
         if (sphere2_t > 0.f && (sphere2_t < sphere1_t || sphere1_t <= 0.f)) {
-            pixel = vec4(0.5*(1+normalize(sphere2_t*ray - sphere2_center)),1.f);
+            //pixel = vec4(0.5*(1+normalize(sphere2_t*ray - sphere2_center)),1.f);
+            pixel = vec4(sphere2_t);
         }
     }
+    if ((triangle) > 0.0001f)
+        pixel = vec4(triangle);
+    
 
-    pixel = mix(texelFetch(tex, pixel_coords, 0),pixel, 1.f / float(seed+1.f));
-    pixel = vec4(vec3(snoise(vec3(tex_coords*500.f,seed*0.5f))),1.f);
+    pixel = mix(texelFetch(tex, pixel_coords, 0),pixel, 1.f / float(sampleCount+1.f));
+
+    //pixel = vec4(random(int(pixel_coords.x),1, int(pixel_coords.y), int(sampleCount)));
     // output to a specific pixel in the image
     imageStore(img_output, pixel_coords, pixel);
 }
