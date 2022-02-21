@@ -11,7 +11,7 @@ in vec3 normal;
 void main()
 {
 	int tiles = 9;
-	float epsilon = 0.0000005f*(tiles);
+	float epsilon = 0.5f*(tiles);
     float cx = floor(tiles*uv.x-epsilon);
 	float cy = floor(tiles*uv.y-epsilon);
 	float cz = floor(tiles*uv.z-epsilon);

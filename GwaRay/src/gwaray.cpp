@@ -1,6 +1,7 @@
 #include "Gwathra.h"
 #include "raymain.h"
 #include "Core/entrypoint.h"
+
 namespace gwa {
 	class GwaRay : public Application {
 

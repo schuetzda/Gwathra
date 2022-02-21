@@ -1,4 +1,6 @@
 #version 450
+
+# define M_PI           3.14159265358979323846  /* pi */
 layout(local_size_x = 1, local_size_y = 1) in;
 layout(rgba32f, binding = 0) uniform image2D img_output;
 
@@ -7,6 +9,7 @@ uniform uint sampleCount;
 uniform mat4 invProjViewMX;
 uniform mat4 camPos;
 
+float u,v;
 vec3 p;
 const vec2 s16[] = {{0.5625f, 0.4375f}, {0.4375f, 0.6875f}, {0.3125f, 0.375f}, {0.75f, 0.5625f}, {0.1875f, 0.625f}, {0.625f, 0.1875f}, {0.1875f, 0.3125f}, {0.6875f, 0.8125f}, {0.375f, 0.125f}, {0.5f, 0.9375f}, {0.25f, 0.875f}, {0.125f, 0.25f}, {0.0f, 0.5f}, {0.9375f, 0.75f},
 {0.875f, 0.0625f}, {0.0625f, 0.0f}};
@@ -17,11 +20,11 @@ float hit_sphere(const vec3 origin, const vec3 center, const float radius, const
     const float half_b = dot(oc, r);
     const float c = dot(oc,oc) - radius*radius;
     const float discriminant = half_b*half_b - a*c;
-    if (discriminant < 0) {
+
+    if (discriminant < 0)
         return -1.0f;
-    } else {
-        return (-half_b - sqrt(discriminant) ) / a;
-    }
+
+    return (-half_b - sqrt(discriminant) ) / a;
 }
 
 float hit_triangle(const vec3 origin, const vec3 dir, const vec3 t0, const vec3 t1, const vec3 t2) {
@@ -36,11 +39,11 @@ float hit_triangle(const vec3 origin, const vec3 dir, const vec3 t0, const vec3 
     const float f = 1.f/a;
 
     const vec3 s = origin - t0;
-    const float u = f*dot(s,q);
+    u = f*dot(s,q);
     if (u < 0.0f)
         return -1;
     const vec3 r = cross(s, e1);
-    const float v = f*dot(dir,r);
+    v = f*dot(dir,r);
     if (v < 0.f || u + v > 1.f)
         return -1;
     const float t = f*dot(e2,r);
@@ -76,17 +79,21 @@ float random(int pixel_i, int pixel_j, int sampleIndex, int sampleDimension)
 
 vec3 random_in_unit_sphere(){
     p = vec3(0.1,0.1,0.1f);
-   while ( dot(p,p) >= 1.f);{
-        p = 2.f* vec3(random(int(gl_GlobalInvocationID.x), int(gl_GlobalInvocationID.y), 3, int(sampleCount)),
-                      random(int(gl_GlobalInvocationID.x), int(gl_GlobalInvocationID.y), 1, int(sampleCount)),
-                      random(int(gl_GlobalInvocationID.x), int(gl_GlobalInvocationID.y), 2, int(sampleCount))) - vec3(1,1,1);
-    }
+
+    const float theta = random(int(gl_GlobalInvocationID.x+1000),1, int(gl_GlobalInvocationID.y+1000), int(sampleCount)+1000)*2*M_PI;
+    const float v = random(int(gl_GlobalInvocationID.x+5000), 2, int(gl_GlobalInvocationID.y+5000), int(sampleCount)+2000);
+    const float phi = acos((2.f*v)-1.f);
+    const float r = pow(random(int(gl_GlobalInvocationID.x+9000), 3, int(gl_GlobalInvocationID.y+9000), int(sampleCount)+3000),0.333333333333333f);
+    p.x = r * sin(phi) * cos(theta);
+    p.y= r * sin(phi) * sin(theta);
+    p.z= r * cos(phi); 
+
     return p;
 }
 
 void main() {
     // base pixel colour for image
-    vec4 pixel = vec4(0,0,0, 1.0);
+    vec4 pixel = vec4(0.f);
     // get index in global work group i.e x,y position
     const ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
 
@@ -96,28 +103,49 @@ void main() {
     const float sum = 100.1f;
 
     const vec3 sphere1_center = vec3(0.f,0.f,-5.f);
-    const vec3 sphere2_center = vec3(0.f,-100.5f,-5.f);
-    const vec2 sample_coords = (pixel_coords+vec2(random(int(pixel_coords.x),1, int(pixel_coords.y), int(sampleCount)),random(int(pixel_coords.x),2, int(pixel_coords.y), int(sampleCount))))/vec2(dims.x,dims.y);
-    const vec2 screen_coords = sample_coords *2.f -1.f;
-    const vec3 ray = ((invProjViewMX * vec4(screen_coords*depth,sum,depth)).xyz);
-    const float sphere1_t = hit_sphere(vec3(0,0,0),sphere1_center,0.5f,ray);
-    const float sphere2_t = hit_sphere(vec3(0,0,0),sphere2_center,100.f,ray);
-    const float triangle = hit_triangle(vec3(0,0,0),ray,vec3(0.5,-0.5,-2.5),vec3(-0.5,-0.5,-55.5),vec3(0.5,0.5,-2.5));
-    const float plane1_t = -hit_rectangle(vec3(0,0,0),ray,vec3(0.f,2.f,0.f),vec3(0.f,2.f,0.f));
+    const vec3 sphere2_center = vec3(0.f,-100.5f,-1.f);
+    //const vec2 sample_coords = (pixel_coords+vec2(random(int(pixel_coords.x),1, int(pixel_coords.y), int(sampleCount)),random(int(pixel_coords.x),2, int(pixel_coords.y), int(sampleCount))))/vec2(dims.x,dims.y);
+    const vec2 sample_coords = (pixel_coords+s16[sampleCount%16])/vec2(dims.x,dims.y);
     
-    if (sphere1_t > 0.f && (sphere1_t < sphere2_t || sphere2_t <= 0.f)) {
-        //pixel = vec4(0.5*(1+normalize(sphere1_t*ray - sphere1_center)),1.f);
-        pixel = vec4(sphere1_t);
-    } else {    
-        if (sphere2_t > 0.f && (sphere2_t < sphere1_t || sphere1_t <= 0.f)) {
-            //pixel = vec4(0.5*(1+normalize(sphere2_t*ray - sphere2_center)),1.f);
-            pixel = vec4(sphere2_t);
+    const vec2 screen_coords = sample_coords *2.f -1.f;
+    const vec3 ray = (normalize(invProjViewMX * vec4(screen_coords*depth,sum,depth)).xyz);
+    
+    //const float triangle = hit_triangle(vec3(0,0,0),ray,vec3(-0.5,-0.5,-2.5),vec3(0.0,0.5,-2.5),vec3(0.5,-0.5,-2.5));
+    vec3 target = ray;
+    vec3 origin = vec3(0);
+
+    for (int i=0; i<=8;++i){
+        const float sphere1_t = hit_sphere(origin,sphere1_center,0.66f,vec3(target));
+        const float sphere2_t = hit_sphere(origin,sphere2_center,100.f,vec3(target));
+        if (sphere1_t > 0.f && (sphere1_t < sphere2_t || sphere2_t <= 0.f)) {
+
+            origin = origin + sphere1_t*vec3(target);
+            vec3 normal = (origin - sphere1_center)/0.56f;
+            const bool front_face = dot(target, normal) < 0;
+            normal = front_face ? normal :-normal;
+            target = normal + random_in_unit_sphere();
+            //pixel = vec4(normal,1);
+            //target = target - vec4(origin,1);
+
+        } else {    
+            if (sphere2_t > 0.f && (sphere2_t < sphere1_t || sphere1_t <= 0.f)) {
+                origin = origin + sphere2_t*vec3(target);
+                vec3 normal = (origin - sphere2_center)/100.f;
+                const bool front_face = dot(target, normal) < 0;
+                normal = front_face ? normal :-normal;
+                target = normal+ random_in_unit_sphere();
+                //target = target - vec4(origin,1);
+                //pixel = vec4(normal,1);
+            } else {
+                pixel = 1.f/float(pow(1.5f,i))*vec4(0.5333f,0.807f,0.921f, 1.f);
+                break;
+            }
         }
     }
-    if ((triangle) > 0.0001f)
-        pixel = vec4(triangle);
+    //if ((triangle) > 0.0001f)
+    //    pixel = vec4(u,v,1-u-v,1.f);
     
-
+    
     pixel = mix(texelFetch(tex, pixel_coords, 0),pixel, 1.f / float(sampleCount+1.f));
 
     //pixel = vec4(random(int(pixel_coords.x),1, int(pixel_coords.y), int(sampleCount)));

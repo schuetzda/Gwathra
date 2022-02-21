@@ -10,7 +10,10 @@ project "GwaRay"
 	files
 	{
 		"src/**.h",
-		"src/**.cpp"
+		"src/**.cpp",
+		"src/**.comp",
+		"src/**.vert",
+		"src/**.frag",
 	}
 	
 	includedirs

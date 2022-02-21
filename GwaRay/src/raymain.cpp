@@ -1,6 +1,7 @@
 #include "raymain.h"
 #include "gwm.h"
-
+#include <vector>
+#include <Utility/OBJImporter.h>
 namespace gwa {
 
 	RayMain::RayMain() : GwaMain(), m_height(1080), m_width(1920), tex_out(0), seed(0), tex_in(0){
@@ -17,6 +18,11 @@ namespace gwa {
 		const std::string screenVertShaderPath = std::string("src/resources/screen.vert");
 		const std::string screenFragShaderPath = std::string("src/resources/screen.frag");
 		const std::string rayTracerComputeShaderPath = std::string("src/resources/raytracer.comp");
+
+		OBJMesh mesh = OBJMesh();
+
+		OBJImporter::import_file("assets/CornellBox-Original.obj", &mesh);
+
 		screenShader.create(screenVertShaderPath.c_str(), screenFragShaderPath.c_str());
 		
 		screenVA.create(3);

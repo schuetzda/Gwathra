@@ -89,7 +89,7 @@ GLuint Shader::getUniformLocation(const char* name) {
 GLuint loadShader(const char* shaderPath, const GLuint shaderType, const char* shaderName) {
 	std::ifstream shaderFileIn(shaderPath, std::ios::in | std::ios::binary);
 	std::string shaderString;
-
+	std::cout << shaderPath << std::endl;
 	if (shaderFileIn)
 	{
 		shaderFileIn.seekg(0, std::ios::end);
