@@ -11,8 +11,8 @@ namespace gwm
 	Pnt3 operator +(const Pnt3& a, const Vec3& b);
 	Vec3 operator -(const Pnt3& a, const Vec3& b);
 	Pnt3 operator *(Pnt3 v, float s);
-	Pnt3 operator *(float s, Pnt3 v);
+	Pnt3 operator *(float s, Pnt3 a);
 	Pnt3 operator /(Pnt3 v, float s);
-	Pnt3 operator /(float s, Pnt3 v);
+	Pnt3 operator /(float s, Pnt3 a);
 }
 

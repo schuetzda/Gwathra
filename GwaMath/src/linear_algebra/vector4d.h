@@ -6,22 +6,19 @@ namespace gwm
 {
 	struct Vec4
 	{
-		float x = 0.f;
-		float y = 0.f;
-		float z = 0.f;
-		float w = 0.f;
+		float v[4];
 
-		Vec4() : x(0), y(0), z(0), w(0) {}
-		Vec4(const float x, const float y, const float z, const float w) : x(x), y(y), z(z),w(w) {}
+		Vec4() :v{ 0.f,0.f,0.f,0.f } {}
+		Vec4(const float x, const float y, const float z, const float w) : v{ x,y,z,w } {}
 
 		float& operator [](const int i);
 		const float& operator [](const int i) const;
 		Vec4& operator*=(const float s);
 		Vec4& operator/=(const float s);
-		Vec4& operator+=(const Vec4& v);
-		Vec4& operator-=(const Vec4& v);
-		Vec4(const Vec3& v);
-		Vec4(const Pnt3& v);
+		Vec4& operator+=(const Vec4& x);
+		Vec4& operator-=(const Vec4& x);
+		Vec4(const Vec3& x);
+		Vec4(const Pnt3& a);
 		explicit operator Vec3();
 	};
 

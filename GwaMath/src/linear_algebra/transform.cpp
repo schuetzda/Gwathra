@@ -25,9 +25,9 @@ namespace gwm {
 		float s = sin(angle);
 		float d = 1.f - c;
 
-		return Mat3(c + d * axis.x * axis.x, d * axis.x * axis.y - s * axis.z, d * axis.x * axis.z + s * axis.y,
-					d * axis.x * axis.y + s * axis.z, c + d * axis.y * axis.y, d * axis.y * axis.z - s * axis.x,
-					d * axis.x * axis.z - s * axis.y, d * axis.y * axis.z + s * axis.x, c + d * axis.z * axis.z);
+		return Mat3(c + d * axis.v[0] * axis.v[0], d * axis.v[0] * axis.v[1] - s * axis.v[2], d * axis.v[0] * axis.v[2] + s * axis.v[1],
+					d * axis.v[0] * axis.v[1] + s * axis.v[2], c + d * axis.v[1] * axis.v[1], d * axis.v[1] * axis.v[2] - s * axis.v[0],
+					d * axis.v[0] * axis.v[2] - s * axis.v[1], d * axis.v[1] * axis.v[2] + s * axis.v[0], c + d * axis.v[2] * axis.v[2]);
 	}
 
 	Mat4h getRotMatrix4X(float angle) {
@@ -53,9 +53,9 @@ namespace gwm {
 		float s = sin(angle);
 		float d = 1.f - c;
 
-		return Mat4h(c + d * axis.x * axis.x, d * axis.x * axis.y - s * axis.z, d * axis.x * axis.z + s * axis.y, 0.f,
-			d * axis.x * axis.y + s * axis.z, c + d * axis.y * axis.y, d * axis.y * axis.z - s * axis.x, 0.f,
-			d * axis.x * axis.z - s * axis.y, d * axis.y * axis.z + s * axis.x, c + d * axis.z * axis.z, 0.f);
+		return Mat4h(c + d * axis.v[0] * axis.v[0], d * axis.v[0] * axis.v[1] - s * axis.v[2], d * axis.v[0] * axis.v[2] + s * axis.v[1], 0.f,
+			d * axis.v[0] * axis.v[1] + s * axis.v[2], c + d * axis.v[1] * axis.v[1], d * axis.v[1] * axis.v[2] - s * axis.v[0], 0.f,
+			d * axis.v[0] * axis.v[2] - s * axis.v[1], d * axis.v[1] * axis.v[2] + s * axis.v[0], c + d * axis.v[2] * axis.v[2], 0.f);
 	}
 
 	Mat3 getScaleMatrix3(float sx, float sy, float sz) {
@@ -65,15 +65,15 @@ namespace gwm {
 	}
 	Mat3 getScaleMatrix3(float s, const Vec3& v) {
 		s -= 1.f;
-		float x = v.x * s;
-		float y = v.y * s;
-		float z = v.z * s;
-		float vxvy = x * v.y;
-		float vxvz = x * v.z;
-		float vyvz = y * v.z;
-		return Mat3(x * v.x + 1.f, vxvy, vxvz,
-					vxvy, y * v.y + 1.f, vyvz,
-					vxvz, vyvz, z * v.z + 1.f);
+		float x = v.v[0] * s;
+		float y = v.v[1] * s;
+		float z = v.v[2] * s;
+		float vxvy = x * v.v[1];
+		float vxvz = x * v.v[2];
+		float vyvz = y * v.v[2];
+		return Mat3(v[0] * v.v[0] + 1.f, vxvy, vxvz,
+					vxvy, v[1] * v.v[1] + 1.f, vyvz,
+					vxvz, vyvz, v[2] * v.v[2] + 1.f);
 	}
 	Mat4h getScaleMatrix4(float sx, float sy, float sz) {
 		return Mat4h(sx, 0.f, 0.f, 0.f,
@@ -82,27 +82,49 @@ namespace gwm {
 	}
 	Mat4h getScaleMatrix4(float s, const Vec3& v) {
 		s -= 1.f;
-		float x = v.x * s;
-		float y = v.y * s;
-		float z = v.z * s;
-		float vxvy = x * v.y;
-		float vxvz = x * v.z;
-		float vyvz = y * v.z;
-		return Mat4h(x * v.x + 1.f, vxvy, vxvz, 0.f,
-					vxvy, y * v.y + 1.f, vyvz, 0.f,
-					vxvz, vyvz, z * v.z + 1.f, 0.f);
+		float x = v.v[0] * s;
+		float y = v.v[1] * s;
+		float z = v.v[2] * s;
+		float vxvy = x * v.v[1];
+		float vxvz = x * v.v[2];
+		float vyvz = y * v.v[2];
+		return Mat4h(v[0] * v.v[0] + 1.f, vxvy, vxvz, 0.f,
+					vxvy, v[1] * v.v[1] + 1.f, vyvz, 0.f,
+					vxvz, vyvz, v[2] * v.v[2] + 1.f, 0.f);
 	}
 
 	void translate(Mat4& m, Vec3 transl) {
-		m.n[0][3] += transl.x;
-		m.n[1][3] += transl.y;
-		m.n[2][3] += transl.z;
+		m.n[0][3] += transl.v[0];
+		m.n[1][3] += transl.v[1];
+		m.n[2][3] += transl.v[2];
 	}
 
 	void setTranslation(Mat4& m, Vec3 transl) {
-		m.n[3][0] = transl.x;
-		m.n[3][1] = transl.y;
-		m.n[3][2] = transl.z;
+		m.n[3][0] = transl.v[0];
+		m.n[3][1] = transl.v[1];
+		m.n[3][2] = transl.v[2];
+	}
+
+	void transpose(Mat4& m)
+	{
+		float temp = m.n[0][1];
+		m.n[0][1] = m.n[1][0];
+		m.n[1][0] = temp;
+		temp = m.n[0][2];
+		m.n[0][2] = m.n[2][0];
+		m.n[2][0] = temp;
+		temp = m.n[0][3];
+		m.n[0][3] = m.n[3][0];
+		m.n[3][0] = temp;
+		temp = m.n[1][2];
+		m.n[2][1] = m.n[1][2];
+		m.n[1][2] = temp;
+		temp = m.n[1][3];
+		m.n[1][3] = m.n[3][1];
+		m.n[3][1] = temp;
+		temp = m.n[2][3];
+		m.n[2][3] = m.n[3][2];
+		m.n[3][2] = temp;
 	}
 
 	Mat4 getProjectionMat(float fovY, float aspectRatio, float znear, float zfar) {

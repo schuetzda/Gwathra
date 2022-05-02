@@ -113,10 +113,10 @@ namespace gwm {
 		Vec3 r3 = cross(u, c) - s * m.n[2][3];
 
 		return (Mat4(
-			r0.x, r0.y, r0.z, -dot(b, t),
-			r1.x, r1.y, r1.z, dot(a, t),
-			r2.x, r2.y, r2.z, -dot(d, s),
-			r3.x, r3.y, r3.z, dot(c, s)));
+			r0.v[0], r0.v[1], r0.v[2], -dot(b, t),
+			r1.v[0], r1.v[1], r1.v[2], dot(a, t),
+			r2.v[0], r2.v[1], r2.v[2], -dot(d, s),
+			r3.v[0], r3.v[1], r3.v[2], dot(c, s)));
 	}
 
 	Mat4 operator *(const Mat4& a, const Mat4& b)
@@ -144,10 +144,10 @@ namespace gwm {
 	Vec4 operator *(const Mat4& a, const Vec4& v)
 	{
 		return Vec4(
-			a.n[0][0] * v.x + a.n[1][0] * v.y + a.n[2][0] * v.z + a.n[3][0] * v.w,
-			a.n[0][1] * v.x + a.n[1][1] * v.y + a.n[2][1] * v.z + a.n[3][1] * v.w,
-			a.n[0][2] * v.x + a.n[1][2] * v.y + a.n[2][2] * v.z + a.n[3][2] * v.w,
-			a.n[0][3] * v.x + a.n[1][3] * v.y + a.n[2][3] * v.z + a.n[3][3] * v.w);
+			a.n[0][0] * v.v[0] + a.n[1][0] * v.v[1] + a.n[2][0] * v.v[2] + a.n[3][0] * v.v[3],
+			a.n[0][1] * v.v[0] + a.n[1][1] * v.v[1] + a.n[2][1] * v.v[2] + a.n[3][1] * v.v[3],
+			a.n[0][2] * v.v[0] + a.n[1][2] * v.v[1] + a.n[2][2] * v.v[2] + a.n[3][2] * v.v[3],
+			a.n[0][3] * v.v[0] + a.n[1][3] * v.v[1] + a.n[2][3] * v.v[2] + a.n[3][3] * v.v[3]);
 	}
 
 	Mat4 operator +(const Mat4& a, const Mat4& b)

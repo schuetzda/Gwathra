@@ -1,16 +1,15 @@
 #version 450
 
 # define M_PI           3.14159265358979323846  /* pi */
-layout(local_size_x = 1, local_size_y = 1) in;
+layout(local_size_x = 2, local_size_y = 1) in;
 layout(rgba32f, binding = 0) uniform image2D img_output;
 
 uniform sampler2D tex;
+uniform float tanHalfFovY;
+uniform float aspect;
 uniform uint sampleCount;
-uniform mat4 invProjViewMX;
-uniform mat4 camPos;
+uniform mat4 viewMX;
 
-float u,v;
-vec3 p;
 const vec2 s16[] = {{0.5625f, 0.4375f}, {0.4375f, 0.6875f}, {0.3125f, 0.375f}, {0.75f, 0.5625f}, {0.1875f, 0.625f}, {0.625f, 0.1875f}, {0.1875f, 0.3125f}, {0.6875f, 0.8125f}, {0.375f, 0.125f}, {0.5f, 0.9375f}, {0.25f, 0.875f}, {0.125f, 0.25f}, {0.0f, 0.5f}, {0.9375f, 0.75f},
 {0.875f, 0.0625f}, {0.0625f, 0.0f}};
 
@@ -39,11 +38,11 @@ float hit_triangle(const vec3 origin, const vec3 dir, const vec3 t0, const vec3 
     const float f = 1.f/a;
 
     const vec3 s = origin - t0;
-    u = f*dot(s,q);
+    const float u = f*dot(s,q);
     if (u < 0.0f)
         return -1;
     const vec3 r = cross(s, e1);
-    v = f*dot(dir,r);
+    const float v = f*dot(dir,r);
     if (v < 0.f || u + v > 1.f)
         return -1;
     const float t = f*dot(e2,r);
@@ -78,7 +77,7 @@ float random(int pixel_i, int pixel_j, int sampleIndex, int sampleDimension)
 }
 
 vec3 random_in_unit_sphere(){
-    p = vec3(0.1,0.1,0.1f);
+    vec3 p = vec3(0.1,0.1,0.1f);
 
     const float theta = random(int(gl_GlobalInvocationID.x+1000),1, int(gl_GlobalInvocationID.y+1000), int(sampleCount)+1000)*2*M_PI;
     const float v = random(int(gl_GlobalInvocationID.x+5000), 2, int(gl_GlobalInvocationID.y+5000), int(sampleCount)+2000);
@@ -95,59 +94,74 @@ void main() {
     // base pixel colour for image
     vec4 pixel = vec4(0.f);
     // get index in global work group i.e x,y position
+    const ivec2 dims = imageSize(img_output); // fetch image dimensions
     const ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
 
-    const ivec2 dims = imageSize(img_output); // fetch image dimensions
-    const float aspectRatio = dims.x / float(dims.y);
-    const float depth = 99.9f;
-    const float sum = 100.1f;
-
-    const vec3 sphere1_center = vec3(0.f,0.f,-5.f);
+    const vec3 sphere1_center = vec3(0.f,0.f,-1.f);
+    const vec3 sphere3_center = vec3(-1.3f,0.f,-1.f);
     const vec3 sphere2_center = vec3(0.f,-100.5f,-1.f);
     //const vec2 sample_coords = (pixel_coords+vec2(random(int(pixel_coords.x),1, int(pixel_coords.y), int(sampleCount)),random(int(pixel_coords.x),2, int(pixel_coords.y), int(sampleCount))))/vec2(dims.x,dims.y);
     const vec2 sample_coords = (pixel_coords+s16[sampleCount%16])/vec2(dims.x,dims.y);
     
     const vec2 screen_coords = sample_coords *2.f -1.f;
-    const vec3 ray = (normalize(invProjViewMX * vec4(screen_coords*depth,sum,depth)).xyz);
     
     //const float triangle = hit_triangle(vec3(0,0,0),ray,vec3(-0.5,-0.5,-2.5),vec3(0.0,0.5,-2.5),vec3(0.5,-0.5,-2.5));
-    vec3 target = ray;
-    vec3 origin = vec3(0);
-
+    vec3 origin = viewMX[3].xyz;
+    vec3 ray = normalize((screen_coords.x * viewMX[0].xyz * tanHalfFovY * aspect)
+                                             - (screen_coords.y * viewMX[1].xyz * tanHalfFovY)
+                                             + viewMX[2].xyz); 
+    //vec3 origin = vec3(0);
+    float dif_hits = 1.f;
+    vec4 attunation = vec4(1);
     for (int i=0; i<=8;++i){
-        const float sphere1_t = hit_sphere(origin,sphere1_center,0.66f,vec3(target));
-        const float sphere2_t = hit_sphere(origin,sphere2_center,100.f,vec3(target));
-        if (sphere1_t > 0.f && (sphere1_t < sphere2_t || sphere2_t <= 0.f)) {
+        const float sphere1_t = hit_sphere(origin,sphere1_center,0.5f,ray);
+        const float sphere2_t = hit_sphere(origin,sphere2_center,100.f,ray);
+        const float sphere3_t = hit_sphere(origin,sphere3_center,0.5f,ray);
+        if (sphere1_t > 0.0001f && ((sphere1_t < sphere2_t || sphere1_t < sphere3_t) || (sphere2_t <= 0.f && sphere3_t <= 0.f ))) {
 
-            origin = origin + sphere1_t*vec3(target);
-            vec3 normal = (origin - sphere1_center)/0.56f;
-            const bool front_face = dot(target, normal) < 0;
-            normal = front_face ? normal :-normal;
-            target = normal + random_in_unit_sphere();
+            origin = origin + sphere1_t*ray;
+            vec3 normal = (origin - sphere1_center)/0.5f;
+            //const bool front_face = dot(ray, normal) < 0;
+            //normal = front_face ? normal :-normal;
+            ray = normal + random_in_unit_sphere();
+            dif_hits *= 2;
             //pixel = vec4(normal,1);
             //target = target - vec4(origin,1);
 
         } else {    
-            if (sphere2_t > 0.f && (sphere2_t < sphere1_t || sphere1_t <= 0.f)) {
-                origin = origin + sphere2_t*vec3(target);
+            if (sphere2_t > 0.0001f && (sphere2_t < sphere1_t || sphere2_t < sphere3_t ||  (sphere1_t <= 0.f && sphere3_t <= 0.f ))) {
+                origin = origin + sphere2_t*ray;
                 vec3 normal = (origin - sphere2_center)/100.f;
-                const bool front_face = dot(target, normal) < 0;
-                normal = front_face ? normal :-normal;
-                target = normal+ random_in_unit_sphere();
+                //const bool front_face = dot(target, normal) < 0;
+                //normal = front_face ? normal :-normal;
+                //ray = normal+ random_in_unit_sphere();
+                ray = ray - 2* dot(ray, normal)*normal + 0.1f * random_in_unit_sphere();
+                dif_hits *= 1.f;
+                attunation = vec4(0.562f,0.565f,0.578f,1.f);
+                //dif_hits *= 2;
                 //target = target - vec4(origin,1);
                 //pixel = vec4(normal,1);
-            } else {
-                pixel = 1.f/float(pow(1.5f,i))*vec4(0.5333f,0.807f,0.921f, 1.f);
-                break;
-            }
-        }
+            } else if(sphere3_t > 0.0001f && (sphere3_t < sphere1_t || sphere3_t < sphere2_t ||  (sphere2_t <= 0.f && sphere1_t <= 0.f ))){
+                origin = origin + sphere3_t*ray;
+                vec3 normal = (origin - sphere3_center)/0.5f;
+                //attunation = vec4(1.01f,0.782f,0.344f,1.f);
+                //const bool front_face = dot(target, normal) < 0;
+                //normal = front_face ? normal :-normal;
+                ray = ray - 2* dot(ray, normal)*normal + 0.1f * random_in_unit_sphere();
+                dif_hits *= 2;
+                } else {
+                    pixel = (1.f/dif_hits)*vec4(0.9922f,0.9843f,0.8175f, 1.f)*attunation;
+                    //break;
+                }
+        } 
     }
+    
     //if ((triangle) > 0.0001f)
     //    pixel = vec4(u,v,1-u-v,1.f);
     
     
     pixel = mix(texelFetch(tex, pixel_coords, 0),pixel, 1.f / float(sampleCount+1.f));
-
+    //pixel = vec4(tanHalfFovY);
     //pixel = vec4(random(int(pixel_coords.x),1, int(pixel_coords.y), int(sampleCount)));
     // output to a specific pixel in the image
     imageStore(img_output, pixel_coords, pixel);

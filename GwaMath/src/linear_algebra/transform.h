@@ -22,5 +22,7 @@ namespace gwm {
 	void translate(Mat4& m, Vec3 transl);
 	void setTranslation(Mat4& m, Vec3 transl);
 
+	void transpose(Mat4& m);
+
 	Mat4 getProjectionMat(float fovY, float aspectRatio, float znear, float zfar);
 }

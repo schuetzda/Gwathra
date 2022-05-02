@@ -2,8 +2,11 @@
 #include "gwm.h"
 #include <vector>
 #include <Utility/OBJImporter.h>
-namespace gwa {
 
+namespace gwa {
+	gwm::Mat4h viewMX = gwm::Mat4h(1.f);
+	const float fovY = 0.4f;
+	const float tanHalfFovY = tan(fovY / 2.f);
 	RayMain::RayMain() : GwaMain(), m_height(1080), m_width(1920), tex_out(0), seed(0), tex_in(0){
 		
 	}
@@ -30,22 +33,25 @@ namespace gwa {
 		computeShader.create(rayTracerComputeShaderPath.c_str());
 		initComputeShaderTex();		
 		glBindImageTexture(0, tex_out, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+
+		//Init ViewMatrix. 
+		gwm::translate(viewMX, gwm::Vec3(0.0f, 0.f, -9.f));
+		gwm::transpose(viewMX);
+		
 	}
 	void RayMain::render() {
-		//View/Projection Matrices
-		gwm::Mat4h viewMX = gwm::Mat4h(1.f);
-		gwm::translate(viewMX, gwm::Vec3(0.0f, 0.f, -10.f));
-		const gwm::Mat4 projMX = gwm::getProjectionMat(0.4f, m_width / static_cast<float>(m_height), 0.1f, 100.f);
-		const gwm::Mat4 invProjViewMX = gwm::inverse(projMX * viewMX);
+		//const gwm::Mat4 invProjViewMX = gwm::inverse((projMX*viewMX));
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		computeShader.bind();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, tex_out);
-		glUniform1i(screenShader.getUniformLocation("tex"), 0);
+		glUniform1i(computeShader.getUniformLocation("tex"), 0);
+		glUniform1f(computeShader.getUniformLocation("aspect"), m_width / static_cast<float>(m_height));
+		glUniform1f(computeShader.getUniformLocation("tanHalfFovY"), tanHalfFovY);
 		glUniform1ui(computeShader.getUniformLocation("sampleCount"), seed);
-		glUniformMatrix4fv(computeShader.getUniformLocation("invProjViewMX"), 1, GL_FALSE, *invProjViewMX.n);
+		glUniformMatrix4fv(computeShader.getUniformLocation("viewMX"), 1, GL_FALSE, *viewMX.n);
 		glDispatchCompute((GLuint)m_width, (GLuint)m_height, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 

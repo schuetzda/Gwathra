@@ -3,19 +3,18 @@ namespace gwm
 {
 	struct Vec3
 	{
-		float x = 0.f;
-		float y = 0.f;
-		float z = 0.f;
+		float v[3];
 
-		Vec3() : x(0), y(0), z(0) {}
-		Vec3(const float x, const float y, const float z) : x(x), y(y), z(z) {}
+		Vec3() : v{ 0.f,0.f,0.f } {}
+		Vec3(const float x, const float y, const float z) : v{ x,y,z } {}
 
 		float& operator [](const int i);
 		const float& operator [](const int i) const;
 		Vec3& operator*=(const float s);
 		Vec3& operator/=(const float s);
-		Vec3& operator+=(const Vec3& v);
-		Vec3& operator-=(const Vec3& v);
+		Vec3& operator+=(const Vec3& x);
+		Vec3& operator-=(const Vec3& x);
+		float* getVec();
 
 	};
 

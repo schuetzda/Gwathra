@@ -3,7 +3,7 @@
 namespace gwm {
 	Mat4h::Mat4h() : Mat4{ 0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,1.f } {}
 	Mat4h::Mat4h(float id) : Mat4{ id } {}
-	Mat4h::Mat4h(const Mat3& m, const Vec3& transl) : Mat4{ m.n[0][0], m.n[0][1], m.n[0][2], transl.x, m.n[1][0], m.n[1][1], m.n[1][2], transl.y, m.n[2][0], m.n[2][1], m.n[2][2], transl.z, 0.f, 0.f, 0.f, 1.f} {}
+	Mat4h::Mat4h(const Mat3& m, const Vec3& transl) : Mat4{ m.n[0][0], m.n[0][1], m.n[0][2], transl.v[0], m.n[1][0], m.n[1][1], m.n[1][2], transl.v[1], m.n[2][0], m.n[2][1], m.n[2][2], transl.v[2], 0.f, 0.f, 0.f, 1.f} {}
 	Mat4h::Mat4h(float n00, float n01, float n02, float n03,
 		float n10, float n11, float n12, float n13,
 		float n20, float n21, float n22, float n23)
@@ -27,9 +27,9 @@ namespace gwm {
 		Vec3 r0 = cross(b, v);
 		Vec3 r1 = cross(v, a);
 		
-		return (Mat4h(r0.x,  r0.y,r0.z, -dot(b, t),
-					  r1.x, r1.y * invDet, r1.z, dot(a, t),
-					  s.x, s.y, s.z, -dot(d, s)));
+		return (Mat4h(r0.v[0],  r0.v[1],r0.v[2], -dot(b, t),
+					  r1.v[0], r1.v[1] * invDet, r1.v[2], dot(a, t),
+					  s.v[0], s.v[1], s.v[2], -dot(d, s)));
 	}
 
 	const float determinant(const Mat4h& m)
@@ -57,14 +57,14 @@ namespace gwm {
 	}
 	Vec3 operator * (const Mat4h& a, const Vec3& v) {
 		return Vec3(
-			a.n[0][0] * v.x + a.n[1][0] * v.y + a.n[2][0] * v.z,
-			a.n[0][1] * v.x + a.n[1][1] * v.y + a.n[2][1] * v.z,
-			a.n[0][2] * v.x + a.n[1][2] * v.y + a.n[2][2] * v.z);
+			a.n[0][0] * v.v[0] + a.n[1][0] * v.v[1] + a.n[2][0] * v.v[2],
+			a.n[0][1] * v.v[0] + a.n[1][1] * v.v[1] + a.n[2][1] * v.v[2],
+			a.n[0][2] * v.v[0] + a.n[1][2] * v.v[1] + a.n[2][2] * v.v[2]);
 	}
 	Pnt3 operator * (const Mat4h& a, const Pnt3& v) {
 		return Pnt3(
-			a.n[0][0] * v.x + a.n[1][0] * v.y + a.n[2][0] * v.z + a.n[3][0],
-			a.n[0][1] * v.x + a.n[1][1] * v.y + a.n[2][1] * v.z + a.n[3][1],
-			a.n[0][2] * v.x + a.n[1][2] * v.y + a.n[2][2] * v.z + a.n[3][2]);
+			a.n[0][0] * v.v[0] + a.n[1][0] * v.v[1] + a.n[2][0] * v.v[2] + a.n[3][0],
+			a.n[0][1] * v.v[0] + a.n[1][1] * v.v[1] + a.n[2][1] * v.v[2] + a.n[3][1],
+			a.n[0][2] * v.v[0] + a.n[1][2] * v.v[1] + a.n[2][2] * v.v[2] + a.n[3][2]);
 	}
 }

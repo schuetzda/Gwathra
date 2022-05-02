@@ -76,7 +76,7 @@ namespace gwa {
 		glUniformMatrix4fv(shaderTriangle.getUniformLocation("modelMX"), 1, GL_FALSE, *modelMX.n);
 		glUniformMatrix4fv(shaderTriangle.getUniformLocation("viewMX"), 1, GL_FALSE, *viewMX.n);
 		glUniformMatrix4fv(shaderTriangle.getUniformLocation("projMX"), 1, GL_FALSE, *projMX.n);
-		glUniform3f(shaderTriangle.getUniformLocation("lightPos"), lightPos.x, lightPos.y, lightPos.z);
+		glUniform3fv(shaderTriangle.getUniformLocation("lightPos"),1, &lightPos.v[0]);
 		gwm::Mat4h invViewMX = gwm::inverse(viewMX);
 		glUniform3f(shaderTriangle.getUniformLocation("viewPos"), invViewMX(0, 3), invViewMX(1, 3), invViewMX(2, 3));
 		vaTriangle.bind();

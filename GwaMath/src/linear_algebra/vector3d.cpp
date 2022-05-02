@@ -5,93 +5,98 @@ namespace gwm
 {
 	float& Vec3::operator [](const int i) 
 	{
-		return ((&x)[i]);
+		return v[i];
 	}
 
 	const float& Vec3::operator [](const int i) const
 	{
-		return ((&x)[i]);
+		return v[i];
 	}
 
 	Vec3& Vec3::operator *=(const float s)
 	{
-		x *= s;
-		y *= s;
-		z *= s;
+		v[0] *= s;
+		v[1] *= s;
+		v[2] *= s;
 		return (*this);
 	}
 
 	Vec3& Vec3::operator/=(const float s)
 	{
-		x /= s;
-		y /= s;
-		z /= s;
+		v[0] /= s;
+		v[1] /= s;
+		v[2] /= s;
 		return (*this);
 	}
 
-	Vec3& Vec3::operator+=(const Vec3& v)
+	Vec3& Vec3::operator+=(const Vec3& x)
 	{
-		x += v.x;
-		y += v.y;
-		z += v.z;
+		v[0] += x.v[0];
+		v[1] += x.v[1];
+		v[2] += x.v[2];
 		return (*this);
 	}
 
-	Vec3& Vec3::operator-=(const Vec3& v)
+	Vec3& Vec3::operator-=(const Vec3& x)
 	{
-		x -= v.x;
-		y -= v.y;
-		z -= v.z;
+		v[0] -= x.v[0];
+		v[1] -= x.v[1];
+		v[2] -= x.v[2];
 		return (*this);
+	}
+
+	float* Vec3::getVec()
+	{
+		return (&v[0]);
 	}
 
 	const float magnitude(const Vec3& v)
 	{
-		return  sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+		return  sqrtf(v.v[0] * v.v[0] + v.v[1] * v.v[1] + v.v[2] * v.v[2]);
 	}
 
 	void normalize(Vec3& v) 
 	{
-		const float mag = v.x * v.x + v.y * v.y + v.z * v.z;
+		const float mag = v.v[0] * v.v[0] + v.v[1] * v.v[1] + v.v[2] * v.v[2];
 		const float inv_length = fast_rsqrt(mag);
-		v.x *= inv_length;
-		v.y *= inv_length;
-		v.z *= inv_length;
+		v.v[0] *= inv_length;
+		v.v[1] *= inv_length;
+		v.v[2] *= inv_length;
 	}
 
 	const float dot(const Vec3& a,const Vec3& b)
 	{
-		return a.x*b.x + a.y*b.y + a.z*b.z;
+		return a.v[0]*b.v[0] + a.v[1]*b.v[1] + a.v[2]*b.v[2];
 	}
 
 	const Vec3 cross(const Vec3& a, const Vec3& b)
 	{
-		return (const Vec3(a.y*b.z - a.z*b.y,
-						 a.z*b.x - a.x*b.z, 
-						 a.x*b.y - a.y*b.x));
+		return (const Vec3(a.v[1]*b.v[2] - a.v[2]*b.v[1],
+						 a.v[2]*b.v[0] - a.v[0]*b.v[2], 
+						 a.v[0]*b.v[1] - a.v[1]*b.v[0]));
 	}
 
 	const Vec3 project(const Vec3& a, const Vec3& b)
 	{
 		//b * dot(a,b) / dot(b,b)
-		float dotAB = a.x*b.x + a.y*b.y + a.z*b.z;
-		float dotBB = b.x*b.x + b.y*b.y + b.z*b.z;
-		return (const Vec3(b.x*dotAB / dotBB, b.y*dotAB / dotBB, b.z*dotAB / dotBB));
+		float dotAB = a.v[0]*b.v[0] + a.v[1]*b.v[1] + a.v[2]*b.v[2];
+		float dotBB = b.v[0]*b.v[0] + b.v[1]*b.v[1] + b.v[2]*b.v[2];
+		return (const Vec3(b.v[0]*dotAB / dotBB, b.v[1]*dotAB / dotBB, b.v[2]*dotAB / dotBB));
 	}
 
 	const Vec3 reject(const Vec3& a, const Vec3& b)
 	{
 		//a - b * dot(a,b) / dot(b,b)
-		float dotAB = a.x*b.x + a.y*b.y + a.z*b.z;
-		float dotBB = b.x*b.x + b.y*b.y + b.z*b.z;
-		return (const Vec3((a.x-b.x)*dotAB/dotBB,a.y-b.y*dotAB / dotBB,a.z-b.z*dotAB / dotBB));
+		float dotAB = a.v[0]*b.v[0] + a.v[1]*b.v[1] + a.v[2]*b.v[2];
+		float dotBB = b.v[0]*b.v[0] + b.v[1]*b.v[1] + b.v[2]*b.v[2];
+		return (const Vec3((a.v[0]-b.v[0])*dotAB/dotBB,a.v[1]-b.v[1]*dotAB / dotBB,a.v[2]-b.v[2]*dotAB / dotBB));
 	}
 
 	Vec3 operator *(Vec3 v, const float s)
 	{
-		v.x *= s;
-		v.y *= s;
-		v.z *= s;
+		v.v[0] *= s;
+		v.v[1] *= s;
+		v.v[2] *= s;
 		return v;
 	}
 
@@ -102,31 +107,31 @@ namespace gwm
 
 	Vec3 operator /(Vec3 v, float s)
 	{
-		v.x /= s;
-		v.y /= s;
-		v.z /= s;
+		v.v[0] /= s;
+		v.v[1] /= s;
+		v.v[2] /= s;
 		return v;
 	}
 	Vec3 operator /(float s, Vec3 v)
 	{
-		v.x = s / v.x;
-		v.y = s / v.y;
-		v.z = s / v.z;
+		v.v[0] = s / v.v[0];
+		v.v[1] = s / v.v[1];
+		v.v[2] = s / v.v[2];
 		return v;
 	}
 
 	Vec3 operator +(const Vec3& a, const Vec3& b)
 	{
-		return (Vec3(a.x + b.x, a.y + b.y, a.z + b.z));
+		return (Vec3(a.v[0] + b.v[0], a.v[1] + b.v[1], a.v[2] + b.v[2]));
 	}
 
 	Vec3 operator -(const Vec3& a, const Vec3& b)
 	{
-		return (Vec3(a.x - b.x, a.y - b.y, a.z - b.z));
+		return (Vec3(a.v[0] - b.v[0], a.v[1] - b.v[1], a.v[2] - b.v[2]));
 	}
 
 	Vec3 operator -(const Vec3& a)
 	{
-		return (Vec3(-a.x,-a.y,-a.z));
+		return (Vec3(-a.v[0],-a.v[1],-a.v[2]));
 	}
 }

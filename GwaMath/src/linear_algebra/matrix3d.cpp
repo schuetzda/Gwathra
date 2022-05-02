@@ -69,9 +69,9 @@ namespace gwm {
 
 		float invDet = 1.0f / dot(r2, c);
 
-		return (Mat3(r0.x *invDet, r0.y *invDet, r0.z *invDet,
-					r1.x *invDet, r1.y *invDet, r1.z *invDet,
-					r2.x *invDet, r2.y *invDet, r2.z *invDet));
+		return (Mat3(r0.v[0] *invDet, r0.v[1] *invDet, r0.v[2] *invDet,
+					r1.v[0] *invDet, r1.v[1] *invDet, r1.v[2] *invDet,
+					r2.v[0] *invDet, r2.v[1] *invDet, r2.v[2] *invDet));
 	}
 
 	Mat3 operator *(const Mat3& a, const Mat3& b)
@@ -89,9 +89,9 @@ namespace gwm {
 
 	Vec3 operator *(const Mat3& a, const Vec3& v)
 	{
-		return Vec3(a.n[0][0] * v.x + a.n[0][1] * v.y + a.n[0][2] * v.z,
-					a.n[1][0] * v.x + a.n[1][1] * v.y + a.n[1][2] * v.z,
-					a.n[2][0] * v.x + a.n[2][1] * v.y + a.n[2][2] * v.z);
+		return Vec3(a.n[0][0] * v.v[0] + a.n[0][1] * v.v[1] + a.n[0][2] * v.v[2],
+					a.n[1][0] * v.v[0] + a.n[1][1] * v.v[1] + a.n[1][2] * v.v[2],
+					a.n[2][0] * v.v[0] + a.n[2][1] * v.v[1] + a.n[2][2] * v.v[2]);
 	}
 
 	Mat3 operator +(const Mat3& a, const Mat3& b)
