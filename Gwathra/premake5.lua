@@ -16,14 +16,16 @@ project "Gwathra"
 	includedirs
 	{
 		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.glad}"
+		"%{IncludeDir.glad}",
+		"%{wks.location}/GwaMath/src",
 	}
 	
 	links
 	{
 		"GLFW",
 		"glad",
-		"opengl32.lib"
+		"opengl32.lib",
+		"GwaMath"
 	}
 	
 	filter "system:windows"

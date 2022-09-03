@@ -20,7 +20,7 @@ project "GwaMath"
 		
 	links 
 	{
-		"Gwathra"
+		
 	}
 		
 	filter "system:windows"

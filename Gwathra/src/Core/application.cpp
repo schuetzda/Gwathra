@@ -62,6 +62,13 @@ namespace gwa {
 			}
 		);
 
+		glfwSetKeyCallback(window,
+			[](GLFWwindow* window, int key,int scancode, int action, int modifiers) {
+				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(window));
+				main.keyPressed(key, scancode, action, modifiers);
+			}
+		);
+
 		glfwSetScrollCallback(window,
 			[](GLFWwindow* window, double x, double y) {
 				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(window));
