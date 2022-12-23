@@ -3,11 +3,11 @@
 namespace gwm {
 	Mat4h::Mat4h() : Mat4{ 0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,0.f,1.f } {}
 	Mat4h::Mat4h(float id) : Mat4{ id } {}
-	Mat4h::Mat4h(const Mat3& m, const Vec3& transl) : Mat4{ m.n[0][0], m.n[0][1], m.n[0][2], transl.v[0], m.n[1][0], m.n[1][1], m.n[1][2], transl.v[1], m.n[2][0], m.n[2][1], m.n[2][2], transl.v[2], 0.f, 0.f, 0.f, 1.f} {}
+	Mat4h::Mat4h(const Mat3& m, const Vec3& transl) : Mat4{ m.n[0][0], m.n[1][0], m.n[2][0], 0.f, m.n[0][1], m.n[1][1], m.n[2][1], 0.f, m.n[0][2], m.n[1][2], m.n[2][2], 0.f, transl.v[0], transl.v[1], transl.v[2], 1.f} {}
 	Mat4h::Mat4h(float n00, float n01, float n02, float n03,
 		float n10, float n11, float n12, float n13,
 		float n20, float n21, float n22, float n23)
-		: Mat4{ n00, n01, n02, n03,  n10,n11,n12, n13 ,n20,n21,n22, n23, 0.f, 0.f, 0.f, 1.f } {}
+		: Mat4{ n00, n10, n20, 0.f,  n01,n11,n21, 0.f ,n02,n12,n22, 0.f, n03, n13, n23, 1.f } {}
 
 	Mat4h inverse(const Mat4h& h) {
 		const Vec3& a = Vec3(h.n[0][0], h.n[0][1], h.n[0][2]);

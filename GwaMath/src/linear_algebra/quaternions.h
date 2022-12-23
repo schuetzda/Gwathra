@@ -8,7 +8,7 @@ namespace gwm {
 		Quat() :x(0.f), y(0.f), z(0.f), w(0.f) {}
 		Quat(float a[4]) :x(a[0]), y(a[1]), z(a[2]), w(a[3]) {}
 		Quat(float a, float b, float c, float d) :x(a), y(b), z(c), w(d) {}
-		Quat(Vec3 a, float s) :x(a.v[0]), y(a.v[1]), z(a.v[2]), w(a.v[3]) {}
+		Quat(Vec3 a, float s) :x(a.v[0]), y(a.v[1]), z(a.v[2]), w(s) {}
 
 		const Vec3& getImaginary(void) const;
 

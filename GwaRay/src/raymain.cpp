@@ -38,8 +38,6 @@ namespace gwa {
 		//Init ViewMatrix. 
 		
 		gwm::translate(cam.viewMX, gwm::Vec3(0.0f, 0.f, -50.f));
-		gwm::transpose(cam.viewMX);
-		
 	}
 	void RayMain::render() {
 		//const gwm::Mat4 invProjViewMX = gwm::inverse((projMX*viewMX));
@@ -94,7 +92,7 @@ namespace gwa {
 
 	void RayMain::keyPressed(int key, int scancode, int action, int modifiers) {
 		std::cout << action;
-		/*if (action == 1)
+		if (action == 1)
 			return;
 		switch (key)
 		{
@@ -117,7 +115,7 @@ namespace gwa {
 			break;
 		default:
 			break;
-		}*/
+		}
 	}
 
 	void RayMain::mouseScrolled(double x, double y) {

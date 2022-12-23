@@ -40,7 +40,7 @@ namespace gwa {
 		glfwSetWindowUserPointer(window, this);
 
 		glfwSetWindowUserPointer(window, main);
-
+		
 		glfwSetFramebufferSizeCallback(window,
 			[](GLFWwindow* window, int width, int height) {
 				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(window));
