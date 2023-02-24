@@ -103,7 +103,7 @@ namespace gwa {
 	}
 
 	void CubeMain::cursorPositionChanged(double x, double y) {
-		bool leftPressed = Application::IsMouseButtonPressed(0);
+		/*bool leftPressed = keyPressed(0);
 		bool middlePressed = Application::IsMouseButtonPressed(2);
 		bool rightPressed = Application::IsMouseButtonPressed(1);
 		if (leftPressed) {
@@ -129,15 +129,15 @@ namespace gwa {
 			mouseX = x;
 			mouseY = y;
 			modelMX = translMX * rotateMX * scaleMX;
-		}
+		}*/
 	}
 
 	void CubeMain::mouseButtonChanged(int button, int action, int modifiers) {
-		if (button == 0 || button == 1 || button == 2) {
+		/*if (button == 0 || button == 1 || button == 2) {
 			std::pair<double, double> pos = Application::GetMousePosition();
 			mouseX = pos.first;
 			mouseY = pos.second;
-		}
+		}*/
 	}
 
 	void CubeMain::mouseScrolled(double x, double y) {

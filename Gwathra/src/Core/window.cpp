@@ -2,7 +2,7 @@
 #include "GLFW/glfw3.h"
 #include <iostream>
 
-static GLFWwindow* window;
+static GLFWwindow* m_window;
 namespace gwa {
 	static void resizeWindow(GLFWwindow* window, int width, int height) {
 		std::cout << "Test";
@@ -13,7 +13,7 @@ namespace gwa {
 	}
 
 	Window::~Window() {
-		glfwDestroyWindow(window);
+		glfwDestroyWindow(m_window);
 		glfwTerminate();
 	}
 
@@ -29,22 +29,22 @@ namespace gwa {
 
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
-		window = glfwCreateWindow(width, height, "SimpleCubeRenderer", NULL, NULL);
+		m_window = glfwCreateWindow(width, height, "SimpleCubeRenderer", NULL, NULL);
 
-		if (window == NULL)
+		if (m_window == NULL)
 		{
 			glfwTerminate();
 			return;
 		}
 
-		glfwMakeContextCurrent(window);
+		glfwMakeContextCurrent(m_window);
 
-		glfwSetFramebufferSizeCallback(window, resizeWindow);
+		glfwSetFramebufferSizeCallback(m_window, resizeWindow);
 	}
 
 	void Window::update() {
 		glfwPollEvents();
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(m_window);
 	}
 }

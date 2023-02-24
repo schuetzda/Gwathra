@@ -125,6 +125,7 @@ void main() {
             //normal = front_face ? normal :-normal;
             ray = normal + random_in_unit_sphere();
             dif_hits *= 2;
+            attunation = vec4(0.514f,1.f,0.682f,1.f);
             //pixel = vec4(normal,1);
             //target = target - vec4(origin,1);
 
@@ -137,7 +138,7 @@ void main() {
                 //ray = normal+ random_in_unit_sphere();
                 ray = ray - 2* dot(ray, normal)*normal + 0.1f * random_in_unit_sphere();
                 dif_hits *= 1.f;
-                attunation = vec4(0.562f,0.565f,0.578f,1.f);
+                attunation = vec4(1.f,0.514f,0.518f,1.f);
                 //dif_hits *= 2;
                 //target = target - vec4(origin,1);
                 //pixel = vec4(normal,1);
@@ -150,7 +151,7 @@ void main() {
                 ray = ray - 2* dot(ray, normal)*normal + 0.1f * random_in_unit_sphere();
                 dif_hits *= 2;
                 } else {
-                    pixel = (1.f/dif_hits)*vec4(0.9922f,0.9843f,0.8175f, 1.f)*attunation;
+                    pixel = (1.f/dif_hits)*vec4(0.529,0.808,0.922, 1.f)*attunation;
                     //break;
                 }
         } 

@@ -2,11 +2,10 @@
 #include "gwm.h"
 #include <vector>
 #include <Utility/OBJImporter.h>
-#include "Utility/camera.h"
+
 namespace gwa {
 	const float fovY = 0.4f;
 	const float tanHalfFovY = tan(fovY / 2.f);
-	gwa::Camera cam;
 
 	RayMain::RayMain() : GwaMain(), m_height(1080), m_width(1920), tex_out(0), seed(0), tex_in(0){
 		
@@ -34,10 +33,6 @@ namespace gwa {
 		computeShader.create(rayTracerComputeShaderPath.c_str());
 		initComputeShaderTex();		
 		glBindImageTexture(0, tex_out, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-
-		//Init ViewMatrix. 
-		
-		gwm::translate(cam.viewMX, gwm::Vec3(0.0f, 0.f, -50.f));
 	}
 	void RayMain::render() {
 		//const gwm::Mat4 invProjViewMX = gwm::inverse((projMX*viewMX));
@@ -50,8 +45,8 @@ namespace gwa {
 		glUniform1i(computeShader.getUniformLocation("tex"), 0);
 		glUniform1f(computeShader.getUniformLocation("aspect"), m_width / static_cast<float>(m_height));
 		glUniform1f(computeShader.getUniformLocation("tanHalfFovY"), tanHalfFovY);
-		glUniform1ui(computeShader.getUniformLocation("sampleCount"), seed);
-		glUniformMatrix4fv(computeShader.getUniformLocation("viewMX"), 1, GL_FALSE, *cam.viewMX.n);
+		glUniform1ui(computeShader.getUniformLocation("sampleCount"), Application::Get().GetCam().getSeed());
+		glUniformMatrix4fv(computeShader.getUniformLocation("viewMX"), 1, GL_FALSE, *Application::Get().GetCam().getViewMX().n);
 		glDispatchCompute((GLuint)m_width, (GLuint)m_height, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
@@ -65,7 +60,6 @@ namespace gwa {
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		screenVA.release();
 
-		seed++;
 	}
 	void RayMain::deactivate() {
 
@@ -91,31 +85,7 @@ namespace gwa {
 	}
 
 	void RayMain::keyPressed(int key, int scancode, int action, int modifiers) {
-		std::cout << action;
-		if (action == 1)
-			return;
-		switch (key)
-		{
-			//A Key
-		case 87:
-			cam.moveForward();
-			seed = 0;
-			break;
-		case 83:
-			cam.moveBackward();
-			seed = 0;
-			break;
-		case 65:
-			cam.moveLeft();
-			seed = 0;
-			break;
-		case 68:
-			cam.moveRight();
-			seed = 0;
-			break;
-		default:
-			break;
-		}
+
 	}
 
 	void RayMain::mouseScrolled(double x, double y) {

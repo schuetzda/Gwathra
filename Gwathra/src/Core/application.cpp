@@ -1,15 +1,21 @@
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "GLFW/glfw3.h"
 #include "Application.h"
 #include <iostream>
 
+
 static uint32_t SCR_WIDTH = 1920;
 static uint32_t SCR_HEIGHT = 1080;
-static GLFWwindow* window;
 //TODO: Window creation and Input events in seperate classes
+
+
 namespace gwa {
-	Application::Application(GwaMain *const main, const std::string& name): main(main), name(name) {
-		
+	static GLFWwindow* m_window = nullptr;
+	Application* Application::s_Instance = nullptr;
+
+	Application::Application(GwaMain *const main, const std::string& name): main(main), name(name), cam(Camera()) {
+		s_Instance = this;
+		init();
 	}
 
 	Application::~Application() {
@@ -17,74 +23,79 @@ namespace gwa {
 		delete main;
 	}
 
-	void Application::run() {
-		
+	void Application::init() {
 		initGLFW();
-		
-		window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, name.c_str(), NULL, NULL);
 
-		if (window == NULL)
+		m_window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, name.c_str(), NULL, NULL);
+
+		if (m_window == NULL)
 		{
 			glfwTerminate();
 			return;
 		}
 
-		glfwMakeContextCurrent(window);
-		
+		glfwMakeContextCurrent(m_window);
+
 		// glad: load all OpenGL function pointers
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
 			std::cout << "Failed to initialize GLAD" << std::endl;
 		}
 
-		glfwSetWindowUserPointer(window, this);
+		glfwSetWindowUserPointer(m_window, this);
 
-		glfwSetWindowUserPointer(window, main);
-		
-		glfwSetFramebufferSizeCallback(window,
-			[](GLFWwindow* window, int width, int height) {
-				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(window));
-				main.windowSizeChanged(width, height);
+		glfwSetWindowUserPointer(m_window, main);
+
+		glfwSetFramebufferSizeCallback(m_window,
+			[](GLFWwindow* m_window, int width, int height) {
+				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(m_window));
+		main.windowSizeChanged(width, height);
 			}
 		);
 
-		glfwSetCursorPosCallback(window,
-			[](GLFWwindow* window, double x, double y) {
-				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(window));
-				main.cursorPositionChanged(x, y);
+		glfwSetCursorPosCallback(m_window,
+			[](GLFWwindow* m_window, double x, double y) {
+				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(m_window));
+		main.cursorPositionChanged(x, y);
 			}
 		);
 
-		glfwSetMouseButtonCallback(window,
-			[](GLFWwindow* window, int button, int action, int modifiers) {
-				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(window));
-				main.mouseButtonChanged(button, action, modifiers);
+		glfwSetMouseButtonCallback(m_window,
+			[](GLFWwindow* m_window, int button, int action, int modifiers) {
+				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(m_window));
+		main.mouseButtonChanged(button, action, modifiers);
 			}
 		);
 
-		glfwSetKeyCallback(window,
-			[](GLFWwindow* window, int key,int scancode, int action, int modifiers) {
-				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(window));
-				main.keyPressed(key, scancode, action, modifiers);
+		glfwSetKeyCallback(m_window,
+			[](GLFWwindow* m_window, int key, int scancode, int action, int modifiers) {
+				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(m_window));
+		main.keyPressed(key, scancode, action, modifiers);
 			}
 		);
 
-		glfwSetScrollCallback(window,
-			[](GLFWwindow* window, double x, double y) {
-				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(window));
-				main.mouseScrolled(x, y);
+		glfwSetScrollCallback(m_window,
+			[](GLFWwindow* m_window, double x, double y) {
+				GwaMain& main = *(GwaMain*)(glfwGetWindowUserPointer(m_window));
+		main.mouseScrolled(x, y);
 			}
 		);
-		
+
 		main->init();
+	}
+
+	void Application::run() {
+		
+		
 		double previousTime = glfwGetTime();
 		double avg100 = 0.;
 		int count = 1;
-		while (!glfwWindowShouldClose(window))
+		while (!glfwWindowShouldClose(m_window))
 		{
+			cam.update();
 			main->render();
 			glfwPollEvents();
-			glfwSwapBuffers(window);
+			glfwSwapBuffers(m_window);
 			double currentTime = glfwGetTime();
 			//std::cout << currentTime - previousTime << "\n";
 			avg100 += currentTime - previousTime;
@@ -101,6 +112,13 @@ namespace gwa {
 		glfwTerminate();
 	}
 
+	void* Application::GetNativeWindow()
+	{
+		return m_window;
+	}
+
+	
+
 	void Application::initGLFW() {
 		// glfw: initialize and configure
 		glfwInit();
@@ -112,23 +130,5 @@ namespace gwa {
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-	}
-
-	
-	std::pair<double,double> Application::GetMousePosition() {
-		double xpos, ypos;
-		glfwGetCursorPos(window, &xpos, &ypos);
-
-		return { (float)xpos, (float)ypos };
-	}
-
-	bool Application::IsKeyPressed(const int key){
-		auto state = glfwGetKey(window,key);
-		return state == GLFW_PRESS || state == GLFW_REPEAT;
-	}
-
-	bool Application::IsMouseButtonPressed(const int button){
-		auto state = glfwGetMouseButton(window,button);
-		return state == GLFW_PRESS;
 	}
 }
