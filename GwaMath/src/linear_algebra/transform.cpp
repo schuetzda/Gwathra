@@ -30,32 +30,36 @@ namespace gwm {
 					d * axis.v[0] * axis.v[2] - s * axis.v[1], d * axis.v[1] * axis.v[2] + s * axis.v[0], c + d * axis.v[2] * axis.v[2]);
 	}
 
-	Mat4h getRotMatrix4X(float angle) {
-		return Mat4h(1.f, 0.f, 0.f, 0.f,
+	Mat4 getRotMatrix4X(float angle) {
+		return Mat4(1.f, 0.f, 0.f, 0.f,
 					0.f, cos(angle), -sin(angle), 0.f,
-					0.f, sin(angle), cos(angle), 0.f);
+					0.f, sin(angle), cos(angle), 0.f,
+					0.f, 0.f, 0.f, 1.f);
 	}
-	Mat4h getRotMatrix4Y(float angle) {
-		return Mat4h(cos(angle), 0.f, sin(angle), 0.f,
+	Mat4 getRotMatrix4Y(float angle) {
+		return Mat4(cos(angle), 0.f, sin(angle), 0.f,
 					0.f, 1.f, 0.f, 0.f,
-					-sin(angle), 0.f, cos(angle), 0.f);
+					-sin(angle), 0.f, cos(angle), 0.f,
+					0.f, 0.f, 0.f, 1.f);
 	}
-	Mat4h getRotMatrix4Z(float angle) {
-		return Mat4h(cos(angle), -sin(angle), 0.f, 0.f,
+	Mat4 getRotMatrix4Z(float angle) {
+		return Mat4(cos(angle), -sin(angle), 0.f, 0.f,
 						sin(angle), cos(angle), 0.f, 0.f,
-						0.f, 0.f, 1.f, 0.f);
+						0.f, 0.f, 1.f, 0.f,
+						0.f, 0.f, 0.f, 1.f);
 	}
 
-	Mat4h getRotMatrix4(float angle, Vec3 axis) {
+	Mat4 getRotMatrix4(float angle, Vec3 axis) {
 		normalize(axis);
 
 		float c = cos(angle);
 		float s = sin(angle);
 		float d = 1.f - c;
 
-		return Mat4h(c + d * axis.v[0] * axis.v[0], d * axis.v[0] * axis.v[1] - s * axis.v[2], d * axis.v[0] * axis.v[2] + s * axis.v[1], 0.f,
+		return Mat4(c + d * axis.v[0] * axis.v[0], d * axis.v[0] * axis.v[1] - s * axis.v[2], d * axis.v[0] * axis.v[2] + s * axis.v[1], 0.f,
 			d * axis.v[0] * axis.v[1] + s * axis.v[2], c + d * axis.v[1] * axis.v[1], d * axis.v[1] * axis.v[2] - s * axis.v[0], 0.f,
-			d * axis.v[0] * axis.v[2] - s * axis.v[1], d * axis.v[1] * axis.v[2] + s * axis.v[0], c + d * axis.v[2] * axis.v[2], 0.f);
+			d * axis.v[0] * axis.v[2] - s * axis.v[1], d * axis.v[1] * axis.v[2] + s * axis.v[0], c + d * axis.v[2] * axis.v[2], 0.f,
+			0.f, 0.f, 0.f, 1.f);
 	}
 
 	Mat3 getScaleMatrix3(float sx, float sy, float sz) {

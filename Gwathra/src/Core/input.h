@@ -6,8 +6,8 @@ namespace gwa {
 	{
 	
 	public:
-		static bool IsKeyPressed(const int key);
-		static bool IsMouseButtonPressed(const int button);
+		static int IsKeyPressed(const int key);
+		static int IsMouseButtonPressed(const int button);
 		static std::tuple<float, float> GetMousePosition();
 
 	};

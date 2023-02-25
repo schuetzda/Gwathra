@@ -4,18 +4,18 @@
 
 namespace gwa {
 
-	bool Input::IsKeyPressed(const int key)
+	int Input::IsKeyPressed(const int key)
 	{
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetNativeWindow());
 		auto state = glfwGetKey(window, static_cast<int32_t>(key));
-		return state == GLFW_PRESS;
+		return state;
 	}
 
-	bool Input::IsMouseButtonPressed(const int button)
+	int Input::IsMouseButtonPressed(const int button)
 	{
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetNativeWindow());
 		auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
-		return state == GLFW_PRESS;
+		return state;
 	}
 
 	std::tuple<float, float> Input::GetMousePosition()

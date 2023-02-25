@@ -46,7 +46,8 @@ namespace gwa {
 		glUniform1f(computeShader.getUniformLocation("aspect"), m_width / static_cast<float>(m_height));
 		glUniform1f(computeShader.getUniformLocation("tanHalfFovY"), tanHalfFovY);
 		glUniform1ui(computeShader.getUniformLocation("sampleCount"), Application::Get().GetCam().getSeed());
-		glUniformMatrix4fv(computeShader.getUniformLocation("viewMX"), 1, GL_FALSE, *Application::Get().GetCam().getViewMX().n);
+		glUniformMatrix4fv(computeShader.getUniformLocation("invViewMx"), 1, GL_FALSE, *Application::Get().GetCam().getInvViewMx().n);
+		glUniformMatrix4fv(computeShader.getUniformLocation("invProjMx"), 1, GL_FALSE, *Application::Get().GetCam().getInvProjMx().n);
 		glDispatchCompute((GLuint)m_width, (GLuint)m_height, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 

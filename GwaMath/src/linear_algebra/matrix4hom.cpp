@@ -5,8 +5,8 @@ namespace gwm {
 	Mat4h::Mat4h(float id) : Mat4{ id } {}
 	Mat4h::Mat4h(const Mat3& m, const Vec3& transl) : Mat4{ m.n[0][0], m.n[1][0], m.n[2][0], 0.f, m.n[0][1], m.n[1][1], m.n[2][1], 0.f, m.n[0][2], m.n[1][2], m.n[2][2], 0.f, transl.v[0], transl.v[1], transl.v[2], 1.f} {}
 	Mat4h::Mat4h(float n00, float n01, float n02, float n03,
-		float n10, float n11, float n12, float n13,
-		float n20, float n21, float n22, float n23)
+				 float n10, float n11, float n12, float n13,
+				 float n20, float n21, float n22, float n23)
 		: Mat4{ n00, n10, n20, 0.f,  n01,n11,n21, 0.f ,n02,n12,n22, 0.f, n03, n13, n23, 1.f } {}
 
 	Mat4h inverse(const Mat4h& h) {
@@ -28,7 +28,7 @@ namespace gwm {
 		Vec3 r1 = cross(v, a);
 		
 		return (Mat4h(r0.v[0],  r0.v[1],r0.v[2], -dot(b, t),
-					  r1.v[0], r1.v[1] * invDet, r1.v[2], dot(a, t),
+					  r1.v[0], r1.v[1], r1.v[2], dot(a, t),
 					  s.v[0], s.v[1], s.v[2], -dot(d, s)));
 	}
 

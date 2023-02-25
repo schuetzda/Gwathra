@@ -9,10 +9,10 @@ namespace gwm {
 	Mat3 getRotMatrix3Y(float angle);
 	Mat3 getRotMatrix3Z(float angle);
 	Mat3 getRotMatrix3(float angle, Vec3 axis);
-	Mat4h getRotMatrix4X(float angle);
-	Mat4h getRotMatrix4Y(float angle);
-	Mat4h getRotMatrix4Z(float angle);
-	Mat4h getRotMatrix4(float angle, Vec3 axis);
+	Mat4 getRotMatrix4X(float angle);
+	Mat4 getRotMatrix4Y(float angle);
+	Mat4 getRotMatrix4Z(float angle);
+	Mat4 getRotMatrix4(float angle, Vec3 axis);
 
 	Mat3 getScaleMatrix3(float sx, float sy, float sz);
 	Mat3 getScaleMatrix3(float s, const Vec3& v);
