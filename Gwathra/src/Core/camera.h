@@ -1,6 +1,8 @@
 #pragma once
 #include "gwm.h"
 #include "input.h"
+#include <utility>
+
 namespace gwa{
 
 	class Camera
@@ -13,21 +15,12 @@ namespace gwa{
 		void moveLeft();
 		void update();
 		gwm::Mat4 getInvViewMx() { return m_invView; }
-		gwm::Mat4 getInvProjMx() { return m_invProjection; }
-		int getSeed() { return seed; }
+		int getSeed() { return m_seed; }
 
 	private:
-		float moveSpeed;
-		int seed;
-		
-
-		float m_fovY= 45.0f;
-		float m_aspect = 16.f / 9.f;
-		float m_zNear = 0.1f;
-		float m_zFar = 100.0f;
-
+		float m_moveSpeed;
+		int m_seed;
+		std::pair<int, int> m_prevMousePos;
 		gwm::Mat4 m_invView{ 1.f };
-		gwm::Mat4 m_invProjection{ 1.f };
-		gwm::Mat4 m_Projection{ 1.f };
 	};
 }

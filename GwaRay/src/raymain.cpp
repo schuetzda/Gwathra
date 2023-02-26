@@ -7,7 +7,7 @@ namespace gwa {
 	const float fovY = 0.4f;
 	const float tanHalfFovY = tan(fovY / 2.f);
 
-	RayMain::RayMain() : GwaMain(), m_height(1080), m_width(1920), tex_out(0), seed(0), tex_in(0){
+	RayMain::RayMain() : GwaMain(), m_height(1080), m_width(1920), tex_out(0), tex_in(0){
 		
 	}
 
@@ -47,7 +47,6 @@ namespace gwa {
 		glUniform1f(computeShader.getUniformLocation("tanHalfFovY"), tanHalfFovY);
 		glUniform1ui(computeShader.getUniformLocation("sampleCount"), Application::Get().GetCam().getSeed());
 		glUniformMatrix4fv(computeShader.getUniformLocation("invViewMx"), 1, GL_FALSE, *Application::Get().GetCam().getInvViewMx().n);
-		glUniformMatrix4fv(computeShader.getUniformLocation("invProjMx"), 1, GL_FALSE, *Application::Get().GetCam().getInvProjMx().n);
 		glDispatchCompute((GLuint)m_width, (GLuint)m_height, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
@@ -75,8 +74,6 @@ namespace gwa {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_width, m_height, 0, GL_RGBA, GL_FLOAT, NULL);
 		glBindTexture(GL_TEXTURE_2D, tex_in);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_width, m_height, 0, GL_RGBA, GL_FLOAT, NULL);
-
-		seed = 0;
 	}
 	void RayMain::cursorPositionChanged(double x, double y) {
 

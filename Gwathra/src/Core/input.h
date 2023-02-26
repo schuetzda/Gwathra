@@ -1,5 +1,5 @@
 #pragma once
-#include <tuple>
+#include <utility>
 
 namespace gwa {
 	class Input
@@ -8,7 +8,7 @@ namespace gwa {
 	public:
 		static int IsKeyPressed(const int key);
 		static int IsMouseButtonPressed(const int button);
-		static std::tuple<float, float> GetMousePosition();
+		static std::pair<float, float> GetMousePosition();
 
 	};
 }

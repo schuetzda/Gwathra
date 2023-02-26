@@ -113,7 +113,7 @@ void main() {
     //vec3 origin = vec3(0);
     float dif_hits = 1.f;
     vec4 attunation = vec4(1);
-    for (int i=0; i<=8;++i){
+    for (int i=0; i<=4;++i){
         const float sphere1_t = hit_sphere(origin,sphere1_center,0.5f,ray);
         const float sphere2_t = hit_sphere(origin,sphere2_center,100.f,ray);
         const float sphere3_t = hit_sphere(origin,sphere3_center,0.5f,ray);
@@ -145,7 +145,7 @@ void main() {
             } else if(sphere3_t > 0.0001f && (sphere3_t < sphere1_t || sphere3_t < sphere2_t ||  (sphere2_t <= 0.f && sphere1_t <= 0.f ))){
                 origin = origin + sphere3_t*ray;
                 vec3 normal = (origin - sphere3_center)/0.5f;
-                //attunation = vec4(1.01f,0.782f,0.344f,1.f);
+                attunation = vec4(1.f,1.f,1.f,1.f);
                 //const bool front_face = dot(target, normal) < 0;
                 //normal = front_face ? normal :-normal;
                 ray = ray - 2* dot(ray, normal)*normal + 0.1f * random_in_unit_sphere();

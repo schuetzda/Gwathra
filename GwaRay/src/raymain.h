@@ -24,6 +24,5 @@ namespace gwa {
 		VertexArray screenVA;
 		uint32_t m_width, m_height;
 		GLuint tex_out, tex_in;
-		uint32_t seed;
 	};
 }

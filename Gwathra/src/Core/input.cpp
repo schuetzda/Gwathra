@@ -18,7 +18,7 @@ namespace gwa {
 		return state;
 	}
 
-	std::tuple<float, float> Input::GetMousePosition()
+	std::pair<float, float> Input::GetMousePosition()
 	{
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetNativeWindow());
 		double xpos, ypos;
