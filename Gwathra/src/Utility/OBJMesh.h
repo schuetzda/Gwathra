@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+
+
 class OBJMesh {
 public:
 	std::vector<float> vertices = std::vector<float>();
@@ -10,6 +12,8 @@ public:
 	std::vector<unsigned int> uvIndices = std::vector<unsigned int>();
 	std::vector<unsigned int> normalIndices = std::vector<unsigned int>();
 	
+	void setIndOffset(int indexOffset) { m_indexOffset = indexOffset; }
+	int getIndOffset() { return m_indexOffset; }
 private:
-	int variables;
+	int m_indexOffset;
 };

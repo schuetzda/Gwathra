@@ -24,5 +24,7 @@ namespace gwa {
 		VertexArray screenVA;
 		uint32_t m_width, m_height;
 		GLuint tex_out, tex_in;
+		const float fovY = 0.4f;
+		const float tanHalfFovY = tan(fovY / 2.f);
 	};
 }

@@ -4,7 +4,7 @@
 
 
 namespace gwa {
-	bool pressed = false;
+	
 
 	Camera::Camera(): m_moveSpeed(.5f), m_seed(0), m_invView(gwm::Mat4h(1)) {
 		m_invView = gwm::Mat4h(1.f);

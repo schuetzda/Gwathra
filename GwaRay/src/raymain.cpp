@@ -4,8 +4,7 @@
 #include <Utility/OBJImporter.h>
 
 namespace gwa {
-	const float fovY = 0.4f;
-	const float tanHalfFovY = tan(fovY / 2.f);
+	
 
 	RayMain::RayMain() : GwaMain(), m_height(1080), m_width(1920), tex_out(0), tex_in(0){
 		
