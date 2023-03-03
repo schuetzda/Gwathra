@@ -34,7 +34,6 @@ namespace gwa {
 		glBindImageTexture(0, tex_out, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	}
 	void RayMain::render() {
-		//const gwm::Mat4 invProjViewMX = gwm::inverse((projMX*viewMX));
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -87,6 +86,10 @@ namespace gwa {
 
 	void RayMain::mouseScrolled(double x, double y) {
 
+	}
+
+	std::pair<int,int> RayMain::getWindowSize() {
+		return std::pair<int, int>(m_width, m_height);
 	}
 
 	void RayMain::initComputeShaderTex() {

@@ -16,6 +16,7 @@ namespace gwa {
 		virtual void mouseButtonChanged(int button, int action, int modifiers);
 		virtual void keyPressed(int key, int scancode, int action, int modifiers);
 		virtual void mouseScrolled(double x, double y);
+		virtual std::pair<int, int> getWindowSize();
 
 	private:
 		void initComputeShaderTex();

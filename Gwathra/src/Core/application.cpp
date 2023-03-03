@@ -3,12 +3,7 @@
 #include "Application.h"
 #include <iostream>
 
-
-static uint32_t SCR_WIDTH = 1920;
-static uint32_t SCR_HEIGHT = 1080;
 //TODO: Window creation and Input events in seperate classes
-
-
 namespace gwa {
 	static GLFWwindow* m_window = nullptr;
 	Application* Application::s_Instance = nullptr;
@@ -25,8 +20,8 @@ namespace gwa {
 
 	void Application::init() {
 		initGLFW();
-
-		m_window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, name.c_str(), NULL, NULL);
+		const std::pair<int,int> windowSize = main->getWindowSize();
+		m_window = glfwCreateWindow(windowSize.first, windowSize.second, name.c_str(), NULL, NULL);
 
 		if (m_window == NULL)
 		{
