@@ -1,6 +1,6 @@
 workspace "Gwathra"
 	architecture "x86_64"
-	toolset "v140"
+	toolset "v143"
 	startproject "GwaRay"
 	configurations
 	{

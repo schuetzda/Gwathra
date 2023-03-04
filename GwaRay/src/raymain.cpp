@@ -23,7 +23,7 @@ namespace gwa {
 
 		OBJMesh mesh = OBJMesh();
 
-		OBJImporter::import_file("assets/CornellBox-Original.obj", &mesh);
+		OBJImporter::import_filetiny("assets/CornellBox-Original.obj", &mesh);
 
 		screenShader.create(screenVertShaderPath.c_str(), screenFragShaderPath.c_str());
 		

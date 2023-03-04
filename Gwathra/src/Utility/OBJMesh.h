@@ -8,12 +8,13 @@ public:
 	std::vector<float> uvs = std::vector<float>();
 	std::vector<float> normals = std::vector<float>();
 
-	std::vector<unsigned int> vertexIndices = std::vector<unsigned int>();
-	std::vector<unsigned int> uvIndices = std::vector<unsigned int>();
-	std::vector<unsigned int> normalIndices = std::vector<unsigned int>();
+	std::vector<uint32_t> vertexIndices = std::vector<uint32_t>();
+	std::vector<uint32_t> normalIndices = std::vector<uint32_t>();
+	std::vector<uint32_t> uvIndices = std::vector<uint32_t>();
 	
 	void setIndOffset(int indexOffset) { m_indexOffset = indexOffset; }
 	int getIndOffset() { return m_indexOffset; }
 private:
+
 	int m_indexOffset;
 };

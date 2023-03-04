@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 #include <vector>
 #include <string>
 #include <iostream>
@@ -7,12 +9,15 @@
 #include <cassert>
 #include "OBJMesh.h"
 
+
 /*
 Inspired by http://www.opengl-tutorial.org/beginners-tutorials/tutorial-7-model-loading/
 */
 class OBJImporter
 {
 public:
+
+	static void import_filetiny(std::string filepath, OBJMesh* mesh);
 	static void import_file(const char* PATH, OBJMesh* mesh) {
 
 		FILE* file;
@@ -90,5 +95,7 @@ public:
 		mesh->setIndOffset(matches);
 		fclose(file);
 	}
+
+private:
 };
 

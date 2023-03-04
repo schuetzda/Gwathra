@@ -11,12 +11,15 @@ project "Gwathra"
 	{
 		"src/**.h",
 		"src/**.cpp",
+		"externals/tinyobjloader/**.cc",
+		"externals/tinyobjloader/**.h"
 	}
 	
 	includedirs
 	{
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glad}",
+		"%{IncludeDir.tinyobjloader}",
 		"%{wks.location}/GwaMath/src",
 	}
 	
