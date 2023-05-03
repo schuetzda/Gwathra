@@ -1,6 +1,7 @@
 #include "raymain.h"
 #include "gwm.h"
 #include <vector>
+#include <Utility/OBJMesh.h>
 #include <Utility/OBJImporter.h>
 
 namespace gwa {
@@ -21,7 +22,8 @@ namespace gwa {
 		const std::string screenFragShaderPath = std::string("src/resources/screen.frag");
 		const std::string rayTracerComputeShaderPath = std::string("src/resources/raytracer.comp");
 
-		OBJMesh mesh = OBJMesh();
+		
+		ObjMesh mesh = ObjMesh();
 
 		OBJImporter::import_filetiny("assets/CornellBox-Original.obj", &mesh);
 
