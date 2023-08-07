@@ -16,7 +16,7 @@ namespace gwa {
 		m_seed++;
 
 		
-		const int mouseButtonPressed = Input::IsMouseButtonPressed(1);
+		const int mouseButtonPressed = Input::IsMouseButtonPressed(0);
 		if (pressed && mouseButtonPressed == 0)
 			pressed = false;
 

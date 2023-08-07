@@ -13,11 +13,12 @@ namespace gwa {
 	class OBJImporter
 	{
 	public:
-
-		static bool import_filetiny(std::string filepath, ObjMesh* mesh);
+		static bool import_filetiny(std::string filepath, ObjMesh& mesh, BVHTree& bvhTree);
 
 	private:
 		
+		
+
 	};
 
 }

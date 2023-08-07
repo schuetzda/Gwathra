@@ -1,5 +1,6 @@
 #pragma once
 #include "Gwathra.h"
+#include <Utility/bvhtree.h>
 
 namespace gwa {
 	class RayMain : public GwaMain
@@ -24,7 +25,8 @@ namespace gwa {
 		Shader screenShader, computeShader;
 		VertexArray screenVA;
 		uint32_t m_width, m_height;
-		GLuint tex_out, tex_in;
+		GLuint m_texOut, m_texIn;
+		BVHTree m_bvhTree;
 		const float fovY = 0.4f;
 		const float tanHalfFovY = tan(fovY / 2.f);
 	};

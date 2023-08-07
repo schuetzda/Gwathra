@@ -20,7 +20,7 @@ namespace gwa{
 	private:
 		float m_moveSpeed;
 		int m_seed;
-		std::pair<int, int> m_prevMousePos;
+		std::pair<float, float> m_prevMousePos;
 		gwm::Mat4 m_invView{ 1.f };
 		bool pressed = false;
 	};
