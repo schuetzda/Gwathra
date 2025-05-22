@@ -26,7 +26,6 @@ namespace gwa {
 
 
 		OBJImporter::import_filetiny("assets/CornellBox-Original.obj", mesh, m_bvhTree);
-		m_bvhTree.buildBVHTree();
 
 		screenShader.create(screenVertShaderPath.c_str(), screenFragShaderPath.c_str());
 		
