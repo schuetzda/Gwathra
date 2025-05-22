@@ -10,7 +10,9 @@ project "SimpleCube"
 	files
 	{
 		"src/**.h",
-		"src/**.cpp"
+		"src/**.cpp",
+		"src/**.vert",
+		"src/**.frag"
 	}
 	
 	includedirs

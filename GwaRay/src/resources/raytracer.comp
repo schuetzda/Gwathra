@@ -107,9 +107,14 @@ void main() {
     
     //const float triangle = hit_triangle(vec3(0,0,0),ray,vec3(-0.5,-0.5,-2.5),vec3(0.0,0.5,-2.5),vec3(0.5,-0.5,-2.5));
     vec3 origin = invViewMx[3].xyz;
-    vec3 ray = normalize((screen_coords.x * invViewMx[0].xyz * tanHalfFovY * aspect)
-                                             - (screen_coords.y * invViewMx[1].xyz * tanHalfFovY)
-                                             + invViewMx[2].xyz); 
+    //vec3 ray = normalize((screen_coords.x * invViewMx[0].xyz * tanHalfFovY * aspect)
+    //                                         - (screen_coords.y * invViewMx[1].xyz * tanHalfFovY)
+    //                                         + invViewMx[2].xyz); 
+    vec3 ray = normalize(
+        (screen_coords.x * invViewMx[0].xyz * tanHalfFovY * aspect)
+        - (screen_coords.y * invViewMx[1].xyz * tanHalfFovY)
+        - invViewMx[2].xyz
+);
     //vec3 origin = vec3(0);
     float dif_hits = 1.f;
     vec4 attunation = vec4(1);

@@ -15,7 +15,8 @@ namespace gwa {
 		virtual void windowSizeChanged(int width, int height);
 		virtual void cursorPositionChanged(double x, double y);
 		virtual void mouseButtonChanged(int button, int action, int modifiers);
-		virtual void mouseScrolled(double x, double y);
+		void mouseScrolled(double x, double y);
+		virtual std::pair<int, int> getWindowSize();
 	private:
 		gwm::Mat4 modelMX, rotateMX, translMX, scaleMX;
 		gwm::Vec3 lightPos;
